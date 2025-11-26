@@ -126,6 +126,7 @@
     <Compile Include="Classes\Common\Connection.cs" />
     <Compile Include="Classes\Models\Department.cs" />
     <Compile Include="Classes\Models\Room.cs" />
+    <Compile Include="Classes\Models\User.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
