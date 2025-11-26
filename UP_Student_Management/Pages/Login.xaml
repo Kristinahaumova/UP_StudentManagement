@@ -4,11 +4,54 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:UP_Student_Management.Pages"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Login">
 
     <Grid>
-        
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0" Color="#FFD1DC"/>
+                <GradientStop Offset="1" Color="#5cc5e5"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.7*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="0.6*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Effect="{DynamicResource MaterialDesignElevation4}">
+            <TextBlock 
+                Text="Авторизация в системе" 
+                Foreground="#E4717A" 
+                FontSize="24" 
+                FontWeight="Bold" 
+                HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center" Effect="{DynamicResource MaterialDesignElevation4}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox 
+                    x:Name="txtLogin" 
+                    Margin="0,0,0,10" 
+                    Style="{StaticResource MaterialDesignFilledTextBox}" 
+                    materialDesign:HintAssist.Hint="Введите логин" 
+                    materialDesign:TextFieldAssist.UnderlineBrush="#5cc5e5" 
+                    Width="300"/>
+                <PasswordBox 
+                    Margin="0,0,0,10" 
+                    Style="{StaticResource MaterialDesignFilledPasswordBox}" 
+                    materialDesign:HintAssist.Hint="Введите пароль" 
+                    materialDesign:TextFieldAssist.UnderlineBrush="#5cc5e5" 
+                    Width="300"/>
+                <Button 
+                    Content="Войти" 
+                    Background="#FFD1DC" 
+                    BorderBrush="#FFD1DC" 
+                    Style="{StaticResource MaterialDesignRaisedButton}" 
+                    Width="300"/>
+            </StackPanel>
+        </Border>
     </Grid>
+
 </Page>
