@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace UP_Student_Management.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для Registration.xaml
-    /// </summary>
     public partial class Registration : Page
     {
         public Registration()
@@ -26,6 +23,11 @@ namespace UP_Student_Management.Pages
         }
 
         private void OpenLogin(object sender, MouseButtonEventArgs e)
+        {
+            MainWindow.init.OpenPage(new Pages.Login());
+        }
+
+        private void Regin(object sender, RoutedEventArgs e)
         {
 
         }

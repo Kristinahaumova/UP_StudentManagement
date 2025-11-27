@@ -27,7 +27,12 @@ namespace UP_Student_Management.Pages
 
         private void OpenRegin(object sender, MouseButtonEventArgs e)
         {
+            MainWindow.init.OpenPage(new Pages.Registration());
+        }
 
+        private void Auth(object sender, RoutedEventArgs e)
+        {
+            MainWindow.init.OpenPage(new Pages.Admin.Main());
         }
     }
 }

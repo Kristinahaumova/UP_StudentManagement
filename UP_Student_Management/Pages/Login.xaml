@@ -24,7 +24,7 @@
         <Border Grid.Row="0" CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Effect="{DynamicResource MaterialDesignElevation4}">
             <TextBlock 
                 Text="Авторизация в системе" 
-                Foreground="#E4717A" 
+                Foreground="#0066CC" 
                 FontSize="24" 
                 FontWeight="Bold" 
                 HorizontalAlignment="Center"/>
@@ -36,25 +36,27 @@
                     Margin="0,0,0,20" 
                     Style="{StaticResource MaterialDesignTextBox}" 
                     materialDesign:HintAssist.Hint="Введите логин" 
-                    materialDesign:TextFieldAssist.UnderlineBrush="#5cc5e5" 
+                    materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
                     Width="300"/>
                 <PasswordBox 
                     Margin="0,0,0,20" 
                     Style="{StaticResource MaterialDesignPasswordBox}" 
                     materialDesign:HintAssist.Hint="Введите пароль" 
-                    materialDesign:TextFieldAssist.UnderlineBrush="#5cc5e5" 
+                    materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
                     Width="300"/>
-                <Button 
+                <Button
+                    Click="Auth"
                     Content="Войти" 
                     Background="#FFD1DC" 
-                    BorderBrush="#FFD1DC" 
+                    BorderBrush="#FFD1DC"
+                    Foreground="DeepPink"
                     Style="{StaticResource MaterialDesignRaisedButton}" 
                     Width="300"/>
                 <Label 
                     Content="Ещё не зарегистрированы?" 
                     MouseDown="OpenRegin" 
                     HorizontalAlignment="Center" 
-                    Foreground="#E4717A" 
+                    Foreground="#0066CC" 
                     FontSize="12" 
                     Margin="0,5,0,0" 
                     Style="{StaticResource MaterialDesignLabel}"/>
