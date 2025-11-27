@@ -16,16 +16,16 @@ using System.Windows.Shapes;
 namespace UP_Student_Management.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для Login.xaml
+    /// Логика взаимодействия для Registration.xaml
     /// </summary>
-    public partial class Login : Page
+    public partial class Registration : Page
     {
-        public Login()
+        public Registration()
         {
             InitializeComponent();
         }
 
-        private void OpenRegin(object sender, MouseButtonEventArgs e)
+        private void OpenLogin(object sender, MouseButtonEventArgs e)
         {
 
         }

@@ -12,7 +12,7 @@ namespace UP_Student_Management
         {
             InitializeComponent();
             init = this;
-            OpenPage(new Pages.Login());
+            OpenPage(new Pages.Registration());
         }
         public void OpenPage(Page page)
         {
