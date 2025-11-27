@@ -57,6 +57,7 @@
                     Content="Зарегистрироваться" 
                     Background="#FFD1DC" 
                     BorderBrush="#FFD1DC" 
+                    Foreground="DeepPink"
                     Style="{StaticResource MaterialDesignRaisedButton}" 
                     Width="300"/>
                 <Label 

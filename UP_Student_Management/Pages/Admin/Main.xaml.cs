@@ -29,27 +29,27 @@ namespace UP_Student_Management.Pages.Admin
 
         private void btnAddStudent(object sender, RoutedEventArgs e)
         {
+            MainWindow.init.OpenPage(new Pages.Admin.Student_Add());
+        }
 
+        private void btnEditStudent(object sender, RoutedEventArgs e)
+        {
+            MainWindow.init.OpenPage(new Pages.Admin.Student_Edit());
         }
 
         private void btnDeleteStudent(object sender, RoutedEventArgs e)
         {
 
         }
-
-        private void btnEditStudent(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void gotoRooms(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.init.OpenPage(new Pages.Admin.Rooms());
         }
 
         private void gotoDepartment(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.init.OpenPage(new Pages.Admin.Departments());
         }
+        
     }
 }
