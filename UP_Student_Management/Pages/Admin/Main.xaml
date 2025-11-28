@@ -23,7 +23,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock 
                 Grid.Column="0" 
-                Text="Система управления студентами" 
+                Text="Управление студентами" 
                 Style="{StaticResource MaterialDesignBody1TextBlock}" 
                 Foreground="White" 
                 FontWeight="Bold"
@@ -126,5 +126,17 @@
             Foreground="DeepPink"
             Width="110"
             Margin="140,0,0,0"/>
+        <Button 
+            Click="createRecord" 
+            Content="Создать отчет" 
+            Grid.Row="2" 
+            Style="{StaticResource MaterialDesignRaisedButton}" 
+            Background="#FFD1DC" 
+            BorderBrush="#FFD1DC"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Foreground="DeepPink"
+            Width="140"
+            Margin="0,0,10,0"/>
     </Grid>
 </Page>

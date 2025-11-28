@@ -15,14 +15,46 @@ using System.Windows.Shapes;
 
 namespace UP_Student_Management.Pages.Admin
 {
-    /// <summary>
-    /// Логика взаимодействия для Departments.xaml
-    /// </summary>
     public partial class Departments : Page
     {
         public Departments()
         {
             InitializeComponent();
+        }
+
+        private void Exit(object sender, RoutedEventArgs e)
+        {
+            MainWindow.init.OpenPage(new Pages.Login());
+        }
+
+        private void createRecord(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void gotoRooms(object sender, RoutedEventArgs e)
+        {
+            MainWindow.init.OpenPage(new Pages.Admin.Rooms());
+        }
+
+        private void gotoStudents(object sender, RoutedEventArgs e)
+        {
+            MainWindow.init.OpenPage(new Pages.Admin.Main());
+        }
+
+        private void btnAddDepartment(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnEditDepartment(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnDeleteDepartment(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -6,10 +6,161 @@
       xmlns:local="clr-namespace:UP_Student_Management.Pages.Admin"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="800" d:DesignWidth="1200"
       Title="Rooms">
 
-    <Grid>
-        
+    <Grid Background="white">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="0.2*"/>
+        </Grid.RowDefinitions>
+        <Grid Background="#0066CC" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock 
+                Grid.Column="0" 
+                Text="Управление комнатами" 
+                Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                Foreground="White" 
+                FontWeight="Bold"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"/>
+            <Button 
+                Click="Exit" 
+                Content="Выйти" 
+                Grid.Column="2" 
+                Style="{StaticResource MaterialDesignRaisedButton}" 
+                Background="#FFD1DC" 
+                BorderBrush="#FFD1DC"
+                VerticalAlignment="Center"
+                Foreground="DeepPink"
+                Width="100"
+                Margin="0,0,10,0"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1.4*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Header="Что сделать?" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard" Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Добавить" Margin="5" Click="btnAddRooms" Background="#3EB489" BorderBrush="#3EB489"/>
+                    <Button Content="Редактировать" Margin="5" Click="btnEditRooms" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
+                    <Button Content="Удалить" Margin="5" Click="btnDeleteRooms" Background="#E41613" BorderBrush="#E41613"/>
+                </StackPanel>
+            </GroupBox>
+            <DataGrid 
+                x:Name="datagridRooms" 
+                Grid.Row="1"
+                Margin="10"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                SelectionMode="Single"
+                HeadersVisibility="Column"
+                GridLinesVisibility="None">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Width="150"/>
+                    <DataGridTextColumn Header="Номер комнаты" Width="*"/>
+                    <DataGridTextColumn Header="Вместимость" Width="200"/>
+                    <DataGridTextColumn Header="Свободных мест" Width="200"/>
+                </DataGrid.Columns>
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    </Style>
+                </DataGrid.CellStyle>
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F8F9FA"/>
+                        <Setter Property="Foreground" Value="#333333"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+            </DataGrid>
+            <DataGrid 
+                x:Name="datagridStudentsInRoom" 
+                Grid.Row="2"
+                Margin="10"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                SelectionMode="Single"
+                HeadersVisibility="Column"
+                GridLinesVisibility="None">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Студент" Width="*"/>
+                    <DataGridTextColumn Header="Группа" Width="200"/>
+                    <DataGridTextColumn Header="Дата заселения" Width="200"/>
+                    <DataGridTextColumn Header="Дата выселения" Width="200"/>
+                    <DataGridTextColumn Header="Статус" Width="250"/>
+                </DataGrid.Columns>
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    </Style>
+                </DataGrid.CellStyle>
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F8F9FA"/>
+                        <Setter Property="Foreground" Value="#333333"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+            </DataGrid>
+        </Grid>
+        <Button 
+            Click="gotoStudents" 
+            Content="Студенты" 
+            Grid.Row="2" 
+            Style="{StaticResource MaterialDesignRaisedButton}" 
+            Background="#FFD1DC" 
+            BorderBrush="#FFD1DC"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Foreground="DeepPink"
+            Width="110"
+            Margin="10,0,0,0"/>
+        <Button 
+            Click="gotoDepartments" 
+            Content="Комнаты" 
+            Grid.Row="2" 
+            Style="{StaticResource MaterialDesignRaisedButton}" 
+            Background="#FFD1DC" 
+            BorderBrush="#FFD1DC"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Foreground="DeepPink"
+            Width="110"
+            Margin="140,0,0,0"/>
+        <Button 
+            Click="createRecord" 
+            Content="Создать отчет" 
+            Grid.Row="2" 
+            Style="{StaticResource MaterialDesignRaisedButton}" 
+            Background="#FFD1DC" 
+            BorderBrush="#FFD1DC"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Foreground="DeepPink"
+            Width="140"
+            Margin="0,0,10,0"/>
     </Grid>
 </Page>

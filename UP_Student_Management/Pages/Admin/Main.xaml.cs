@@ -50,6 +50,10 @@ namespace UP_Student_Management.Pages.Admin
         {
             MainWindow.init.OpenPage(new Pages.Admin.Departments());
         }
-        
+
+        private void createRecord(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
