@@ -44,7 +44,8 @@ namespace UP_Student_Management.Pages.Admin
 
         private void btnAddDepartment(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new Departments_Add();
+            dialog.ShowDialog();
         }
 
         private void btnEditDepartment(object sender, RoutedEventArgs e)

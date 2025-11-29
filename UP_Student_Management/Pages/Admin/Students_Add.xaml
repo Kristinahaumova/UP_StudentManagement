@@ -1,0 +1,191 @@
+﻿<Window x:Class="UP_Student_Management.Pages.Admin.Students_Add"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UP_Student_Management.Pages.Admin"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Добавить студента" Height="400" Width="1000" ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBox 
+                x:Name="txtSurname" 
+                Grid.Row="0" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Фамилия"/>
+            <DatePicker 
+                x:Name="dateCapacity" 
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата рождения"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <ComboBox 
+                x:Name="cmbEducation" 
+                Grid.Row="2" 
+                materialDesign:HintAssist.Hint="Образование" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <ComboBox 
+                x:Name="cmbFinance" 
+                Grid.Row="3" 
+                materialDesign:HintAssist.Hint="Финансирование" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtExpulsion"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Информация об отчислении"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBox 
+                x:Name="txtName" 
+                Grid.Row="0" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Имя"/>
+            <ComboBox 
+                x:Name="cmbGender" 
+                Grid.Row="1" 
+                materialDesign:HintAssist.Hint="Пол" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <ComboBox 
+                x:Name="cmbDepartments" 
+                Grid.Row="2" 
+                materialDesign:HintAssist.Hint="Отделение" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtYear" 
+                Grid.Row="3" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Год поступления"/>
+            <DatePicker 
+                x:Name="dateExpulsion" 
+                Grid.Row="4" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата отчисления"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Click="btnChooseFile" Content="Выбрать файл" Margin="5" FontSize="10" Height="20" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
+                <Button Click="btnDeleteFile" Content="Удалить выбранный файл" Margin="5" FontSize="10" Height="20" Background="#E41613" BorderBrush="#E41613"/>
+            </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                <Button Click="btnAdd" Content="Добавить" Margin="5" Height="30" Background="#3EB489" BorderBrush="#3EB489"/>
+                <Button Click="btnCancel" Content="Отмена" Margin="5" Height="30" Background="#E41613" BorderBrush="#E41613"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBox 
+                x:Name="txtPatronomyc" 
+                Grid.Row="0" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Отчество"/>
+            <TextBox 
+                x:Name="txtPhoneNumber" 
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Контактный номер"/>
+            <TextBox 
+                x:Name="txtGroup" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Группа"/>
+            <TextBox 
+                x:Name="txtYearEnd" 
+                Grid.Row="3" 
+                Height="30" 
+                Padding="5" 
+                Margin="5,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Год окончания"/>
+            <TextBox 
+                x:Name="txtDescription"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+        </Grid>
+    </Grid>
+</Window>

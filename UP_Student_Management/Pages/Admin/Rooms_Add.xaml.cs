@@ -10,19 +10,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace UP_Student_Management.Pages.Admin
 {
-    /// <summary>
-    /// Логика взаимодействия для Rooms_Add.xaml
-    /// </summary>
-    public partial class Rooms_Add : Page
+    public partial class Rooms_Add : Window
     {
         public Rooms_Add()
         {
             InitializeComponent();
+        }
+
+        private void btnAdd(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnCancel(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -44,7 +44,8 @@ namespace UP_Student_Management.Pages.Admin
 
         private void btnAddRooms(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new Rooms_Add();
+            dialog.ShowDialog();
         }
 
         private void btnEditRooms(object sender, RoutedEventArgs e)

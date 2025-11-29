@@ -29,7 +29,8 @@ namespace UP_Student_Management.Pages.Admin
 
         private void btnAddStudent(object sender, RoutedEventArgs e)
         {
-            MainWindow.init.OpenPage(new Pages.Admin.Student_Add());
+            var dialog = new Students_Add();
+            dialog.ShowDialog();
         }
 
         private void btnEditStudent(object sender, RoutedEventArgs e)

@@ -1,14 +1,31 @@
-﻿<Page x:Class="UP_Student_Management.Pages.Admin.Departments_Add"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:UP_Student_Management.Pages.Admin"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Departments_Add">
-
-    <Grid>
-        
+﻿<Window x:Class="UP_Student_Management.Pages.Admin.Departments_Add"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UP_Student_Management.Pages.Admin"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Создать отделение" Height="200" Width="400" 
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBox 
+            x:Name="txtDepartmentName" 
+            Grid.Row="0" 
+            Height="30" 
+            Padding="5" 
+            Margin="0,0,0,15" 
+            Style="{StaticResource MaterialDesignTextBox}" 
+            materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+            materialDesign:HintAssist.Hint="Название отделения"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Click="btnAdd" Content="Добавить" Margin="5" Background="#3EB489" BorderBrush="#3EB489"/>
+            <Button Click="btnCancel" Content="Отмена" Margin="5" Background="#E41613" BorderBrush="#E41613"/>
+        </StackPanel>
     </Grid>
-</Page>
+</Window>
