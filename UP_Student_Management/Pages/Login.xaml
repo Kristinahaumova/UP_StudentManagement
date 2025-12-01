@@ -38,7 +38,8 @@
                     materialDesign:HintAssist.Hint="Введите логин" 
                     materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
                     Width="300"/>
-                <PasswordBox 
+                <PasswordBox
+                    x:Name="pwdPassword"
                     Margin="0,0,0,20" 
                     Style="{StaticResource MaterialDesignPasswordBox}" 
                     materialDesign:HintAssist.Hint="Введите пароль" 
@@ -46,7 +47,8 @@
                     Width="300"/>
                 <Button
                     Click="Auth"
-                    Content="Войти" 
+                    Content="Войти"
+                    IsDefault="True"
                     Background="#FFD1DC" 
                     BorderBrush="#FFD1DC"
                     Foreground="DeepPink"

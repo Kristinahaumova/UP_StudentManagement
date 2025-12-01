@@ -55,6 +55,7 @@
                 <Button
                     Click="Regin"
                     Content="Зарегистрироваться" 
+                    IsDefault="True"
                     Background="#FFD1DC" 
                     BorderBrush="#FFD1DC" 
                     Foreground="DeepPink"

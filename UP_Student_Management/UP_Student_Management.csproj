@@ -124,6 +124,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\Common\Connection.cs" />
+    <Compile Include="Classes\Context\UserContext.cs" />
+    <Compile Include="Classes\Interfaces\IUser.cs" />
     <Compile Include="Classes\Models\Department.cs" />
     <Compile Include="Classes\Models\Room.cs" />
     <Compile Include="Classes\Models\Student.cs" />
@@ -269,8 +271,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Classes\Context\" />
-    <Folder Include="Classes\Interfaces\" />
     <Folder Include="Elements\" />
     <Folder Include="Image\" />
   </ItemGroup>
