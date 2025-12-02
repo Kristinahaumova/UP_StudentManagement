@@ -74,13 +74,40 @@
                 HeadersVisibility="Column"
                 GridLinesVisibility="None">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ФИО" Width="150"/>
-                    <DataGridTextColumn Header="Группа" Width="100"/>
-                    <DataGridTextColumn Header="Отделение" Width="120"/>
-                    <DataGridTextColumn Header="Телефон" Width="130"/>
-                    <DataGridTextColumn Header="Финансирование" Width="140"/>
-                    <DataGridTextColumn Header="Год поступления" Width="140"/>
-                    <DataGridTextColumn Header="Год окончания" Width="110"/>
+                    <DataGridTextColumn 
+        Header="ФИО" 
+        Width="250"
+        Binding="{Binding FullName}"/>
+
+                    <DataGridTextColumn 
+        Header="Группа" 
+        Width="100"
+        Binding="{Binding GroupName}"/>
+
+                    <DataGridTextColumn 
+        Header="Отделение" 
+        Width="120"
+        Binding="{Binding DepartmentName}"/>
+
+                    <DataGridTextColumn 
+        Header="Телефон" 
+        Width="130"
+        Binding="{Binding Phone}"/>
+
+                    <DataGridTextColumn 
+        Header="Финансирование" 
+        Width="140"
+        Binding="{Binding Financing}"/>
+
+                    <DataGridTextColumn 
+        Header="Год поступления" 
+        Width="140"
+        Binding="{Binding YearReceipts}"/>
+
+                    <DataGridTextColumn 
+        Header="Год окончания" 
+        Width="110"
+        Binding="{Binding YearFinish}"/>
                 </DataGrid.Columns>
 
                 <DataGrid.CellStyle>

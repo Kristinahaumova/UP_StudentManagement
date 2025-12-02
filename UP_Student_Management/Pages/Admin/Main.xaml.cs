@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UP_Student_Management.Classes.Context;
+using UP_Student_Management.Classes.Models;
 
 namespace UP_Student_Management.Pages.Admin
 {
@@ -20,6 +22,47 @@ namespace UP_Student_Management.Pages.Admin
         public Main()
         {
             InitializeComponent();
+            updateList();
+        }
+        private void updateList()
+        {
+            try
+            {
+                StudentContext studentContext = new StudentContext();
+                var allStudents = studentContext.AllStudents();
+
+                // Если не хотите создавать отдельный класс, можно использовать анонимные типы
+                var displayData = allStudents.Select(s => new
+                {
+                    // ФИО
+                    FullName = $"{s.Surname} {s.Firstname} {s.Patronomyc}".Trim(),
+
+                    // Остальные поля напрямую
+                    GroupName = s.GroupName ?? "",
+                    DepartmentName = $"Отделение {s.DepartmentId}",
+                    Phone = s.Phone ?? "",
+                    Financing = s.isBudget == 1 ? "Бюджет" : "Контракт",
+                    YearReceipts = s.YearReceipts.Year,
+                    YearFinish = s.YearFinish.Year,
+
+                    // Скрытые поля для обработки
+                    Id = s.Id,
+                    Firstname = s.Firstname,
+                    Surname = s.Surname,
+                    Patronomyc = s.Patronomyc,
+                    DepartmentId = s.DepartmentId,
+                    isBudget = s.isBudget,
+                    BirthDate = s.BirthDate,
+                    Sex = s.Sex,
+                    Education = s.Education
+                }).ToList();
+
+                datagridStudents.ItemsSource = displayData;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+            }
         }
 
         private void Exit(object sender, RoutedEventArgs e)

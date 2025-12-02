@@ -125,11 +125,13 @@
     </Compile>
     <Compile Include="Classes\Common\Connection.cs" />
     <Compile Include="Classes\Common\Report.cs" />
+    <Compile Include="Classes\Context\StudentContext.cs" />
     <Compile Include="Classes\Context\DepartmentContext.cs" />
     <Compile Include="Classes\Context\RoomContext.cs" />
     <Compile Include="Classes\Context\UserContext.cs" />
     <Compile Include="Classes\Interfaces\IDepartment.cs" />
     <Compile Include="Classes\Interfaces\IRoom.cs" />
+    <Compile Include="Classes\Interfaces\IStudent.cs" />
     <Compile Include="Classes\Interfaces\IUser.cs" />
     <Compile Include="Classes\Models\Department.cs" />
     <Compile Include="Classes\Models\Room.cs" />
