@@ -19,9 +19,26 @@ namespace UP_Student_Management.Pages.Admin
 {
     public partial class Main : Page
     {
+
+        public delegate void UpdateListDelegate();
+        public static UpdateListDelegate UpdateListRequested; // Должно быть static
+        // В главном окне
+        private void UpdateStudentsList() // Изменили на множественное число
+        {
+            Dispatcher.Invoke(() =>
+            {
+                updateList();
+            });
+        }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            UpdateListRequested -= UpdateStudentsList;
+        }
+
         public Main()
         {
             InitializeComponent();
+            UpdateListRequested += UpdateStudentsList; // Теперь совпадает
             updateList();
         }
         private void updateList()
@@ -30,32 +47,38 @@ namespace UP_Student_Management.Pages.Admin
             {
                 StudentContext studentContext = new StudentContext();
                 var allStudents = studentContext.AllStudents();
+                var allDepartments = new DepartmentContext().AllDepartments();
 
                 // Если не хотите создавать отдельный класс, можно использовать анонимные типы
-                var displayData = allStudents.Select(s => new
+                var displayData = allStudents
+            .Join(allDepartments,
+                student => student.DepartmentId,
+                department => department.Id,
+                (student, department) => new
                 {
                     // ФИО
-                    FullName = $"{s.Surname} {s.Firstname} {s.Patronomyc}".Trim(),
+                    FullName = $"{student.Surname} {student.Firstname} {student.Patronomyc}".Trim(),
 
                     // Остальные поля напрямую
-                    GroupName = s.GroupName ?? "",
-                    DepartmentName = $"Отделение {s.DepartmentId}",
-                    Phone = s.Phone ?? "",
-                    Financing = s.isBudget == 1 ? "Бюджет" : "Контракт",
-                    YearReceipts = s.YearReceipts.Year,
-                    YearFinish = s.YearFinish.Year,
+                    GroupName = student.GroupName ?? "",
+                    DepartmentName = department.Name ?? $"Отделение {department.Id}",
+                    Phone = student.Phone ?? "",
+                    Financing = student.isBudget == 1 ? "Бюджет" : "Контракт",
+                    YearReceipts = student.YearReceipts.Year,
+                    YearFinish = student.YearFinish.Year,
 
                     // Скрытые поля для обработки
-                    Id = s.Id,
-                    Firstname = s.Firstname,
-                    Surname = s.Surname,
-                    Patronomyc = s.Patronomyc,
-                    DepartmentId = s.DepartmentId,
-                    isBudget = s.isBudget,
-                    BirthDate = s.BirthDate,
-                    Sex = s.Sex,
-                    Education = s.Education
-                }).ToList();
+                    Id = student.Id,
+                    Firstname = student.Firstname,
+                    Surname = student.Surname,
+                    Patronomyc = student.Patronomyc,
+                    DepartmentId = student.DepartmentId,
+                    isBudget = student.isBudget,
+                    BirthDate = student.BirthDate,
+                    Sex = student.Sex,
+                    Education = student.Education
+                })
+            .ToList();
 
                 datagridStudents.ItemsSource = displayData;
             }
