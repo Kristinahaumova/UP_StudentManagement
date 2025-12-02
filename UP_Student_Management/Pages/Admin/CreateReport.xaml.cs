@@ -14,14 +14,31 @@ using System.Windows.Shapes;
 
 namespace UP_Student_Management.Pages.Admin
 {
-    /// <summary>
-    /// Логика взаимодействия для CreateReport.xaml
-    /// </summary>
     public partial class CreateReport : Window
     {
         public CreateReport()
         {
             InitializeComponent();
+        }
+
+        private void reportOneStudent(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void reportHostel(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void reportAll(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void exit(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

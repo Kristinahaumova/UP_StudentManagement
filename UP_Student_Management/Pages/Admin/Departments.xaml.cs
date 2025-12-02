@@ -27,11 +27,6 @@ namespace UP_Student_Management.Pages.Admin
             MainWindow.init.OpenPage(new Pages.Login());
         }
 
-        private void createRecord(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void gotoRooms(object sender, RoutedEventArgs e)
         {
             MainWindow.init.OpenPage(new Pages.Admin.Rooms());
@@ -50,7 +45,8 @@ namespace UP_Student_Management.Pages.Admin
 
         private void btnEditDepartment(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new Departments_Edit();
+            dialog.ShowDialog();
         }
 
         private void btnDeleteDepartment(object sender, RoutedEventArgs e)
