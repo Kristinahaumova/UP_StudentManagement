@@ -32,15 +32,22 @@ namespace UP_Student_Management.Pages.Admin
             var dialog = new Students_Add();
             dialog.ShowDialog();
         }
-
+        private void btnAddStatus(object sender, RoutedEventArgs e)
+        {
+            //TODO:Передавать пользователя
+            var dialog = new AddStatus();
+            dialog.ShowDialog();
+        }
         private void btnEditStudent(object sender, RoutedEventArgs e)
         {
-            MainWindow.init.OpenPage(new Pages.Admin.Student_Edit());
+            //TODO:Передавать пользователя
+            var dialog = new Student_Edit();
+            dialog.ShowDialog();
         }
 
         private void btnDeleteStudent(object sender, RoutedEventArgs e)
         {
-
+            //TODO:Удалять пользователя
         }
         private void gotoRooms(object sender, RoutedEventArgs e)
         {
@@ -54,7 +61,8 @@ namespace UP_Student_Management.Pages.Admin
 
         private void createRecord(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new CreateReport();
+            dialog.ShowDialog();
         }
     }
 }

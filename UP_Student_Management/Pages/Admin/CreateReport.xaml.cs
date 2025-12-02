@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace UP_Student_Management.Pages.Admin
 {
     /// <summary>
-    /// Логика взаимодействия для Student_Edit.xaml
+    /// Логика взаимодействия для CreateReport.xaml
     /// </summary>
-    public partial class Student_Edit : Window
+    public partial class CreateReport : Window
     {
-        public Student_Edit()
+        public CreateReport()
         {
             InitializeComponent();
         }

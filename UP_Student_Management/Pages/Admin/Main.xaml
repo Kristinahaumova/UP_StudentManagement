@@ -60,6 +60,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Добавить" Margin="5" Click="btnAddStudent" Background="#3EB489" BorderBrush="#3EB489"/>
                     <Button Content="Редактировать" Margin="5" Click="btnEditStudent" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
+                    <Button Content="Добавить статус" Margin="5" Click="btnAddStatus" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
                     <Button Content="Удалить" Margin="5" Click="btnDeleteStudent" Background="#E41613" BorderBrush="#E41613"/>
                 </StackPanel>
             </GroupBox>
