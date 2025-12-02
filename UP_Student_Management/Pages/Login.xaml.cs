@@ -14,27 +14,28 @@ namespace UP_Student_Management.Pages
         }
         private void Auth(object sender, RoutedEventArgs e)
         {
-            string login = txtLogin.Text.Trim();
-            string password = pwdPassword.Password.Trim();
+            //string login = txtLogin.Text.Trim();
+            //string password = pwdPassword.Password.Trim();
 
-            UserContext userContext = new UserContext();
-            var allUsers = userContext.AllUsers();
+            //UserContext userContext = new UserContext();
+            //var allUsers = userContext.AllUsers();
 
-            var user = allUsers.FirstOrDefault(u => u.Name == login && u.Password == password);
+            //var user = allUsers.FirstOrDefault(u => u.Name == login && u.Password == password);
 
-            if (user == null)
-            {
-                MessageBox.Show("Неверный логин или пароль.");
-                return;
-            }
-            if (user.isAdmin == 0)
-            {
-                MainWindow.init.OpenPage(new Pages.User.Main());
-            }
-            if (user.isAdmin == 1)
-            {
-                MainWindow.init.OpenPage(new Pages.Admin.Main());
-            }
+            //if (user == null)
+            //{
+            //    MessageBox.Show("Неверный логин или пароль.");
+            //    return;
+            //}
+            //if (user.isAdmin == 0)
+            //{
+            //    MainWindow.init.OpenPage(new Pages.User.Main());
+            //}
+            //if (user.isAdmin == 1)
+            //{
+            //    MainWindow.init.OpenPage(new Pages.Admin.Main());
+            //}
+            MainWindow.init.OpenPage(new Pages.Admin.Main());
         }
         private void OpenRegin(object sender, MouseButtonEventArgs e)
         {

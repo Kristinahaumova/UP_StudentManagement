@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
@@ -20,6 +21,30 @@ namespace UP_Student_Management.Pages.Admin
         public Rooms()
         {
             InitializeComponent();
+            updateList();
+        }
+
+        private void updateList()
+        {
+            try
+            {
+                RoomContext roomContext = new RoomContext();
+                var allRooms = roomContext.AllRooms();
+                datagridRooms.ItemsSource = allRooms;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+            }
+        }
+        private void DatagridRooms_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (datagridRooms.SelectedItem == null)
+                return;
+            else
+            {
+                var selectedRoom = datagridRooms.SelectedItem as dynamic;
+            }
         }
 
         private void Exit(object sender, RoutedEventArgs e)

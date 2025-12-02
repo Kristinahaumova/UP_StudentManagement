@@ -62,12 +62,23 @@
                 IsReadOnly="True"
                 SelectionMode="Single"
                 HeadersVisibility="Column"
-                GridLinesVisibility="None">
+                GridLinesVisibility="None"
+                SelectionChanged="DatagridRooms_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Width="150"/>
-                    <DataGridTextColumn Header="Номер комнаты" Width="*"/>
-                    <DataGridTextColumn Header="Вместимость" Width="200"/>
-                    <DataGridTextColumn Header="Свободных мест" Width="200"/>
+                    <DataGridTextColumn 
+            Header="Id" 
+            Width="150"
+            Binding="{Binding Id}"/>
+
+                    <DataGridTextColumn 
+            Header="Номер комнаты" 
+            Width="*"
+            Binding="{Binding Name}"/>
+
+                    <DataGridTextColumn 
+            Header="Вместимость" 
+            Width="200"
+            Binding="{Binding Capacity}"/>
                 </DataGrid.Columns>
 
                 <DataGrid.CellStyle>
