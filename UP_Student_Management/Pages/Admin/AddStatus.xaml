@@ -3,10 +3,588 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:UP_Student_Management.Pages.Admin"
         mc:Ignorable="d"
-        Title="AddStatus" Height="450" Width="800">
-    <Grid>
-        
+        Title="Добавить статус студенту" Height="600" Width="600" ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ComboBox
+            x:Name="cmbStatus" 
+            Grid.Row="0"
+            materialDesign:HintAssist.Hint="Статус" 
+            Padding="5" 
+            Margin="0,0,10,15" 
+            materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+        <Grid x:Name="sirota" Visibility="Hidden"  Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            
+            <DatePicker 
+                x:Name="dateStartStatus"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Начало статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndStatus" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Конец статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtStatus"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Приказ о присвоении статуса"/>
+            <TextBox 
+                x:Name="txtNote"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="5" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="5" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="invalid" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <DatePicker 
+                x:Name="dateStartStatusInvalid"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Начало статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndStatusInvalid" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Конец статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtStatusInvalid"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Приказ о присвоении статуса"/>
+            <TextBox 
+                x:Name="txtNoteInvalid"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+            <TextBox 
+                x:Name="txtTypeInvalid"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="5"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Вид инвалидности"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="6" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="6" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="ovz" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <DatePicker 
+                x:Name="dateStartStatusOvz"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Начало статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndStatusOvz" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Конец статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtStatusOvz"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Приказ о присвоении статуса"/>
+            <TextBox 
+                x:Name="txtNoteOvz"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="5" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="5" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="hostel" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <DatePicker 
+                x:Name="dateStartHostel"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата заселения"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndHostel" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата выселения"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtRoom"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Комната"/>
+            <TextBox 
+                x:Name="txtNoteHostel"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="5" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="5" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="riskGroup" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <DatePicker 
+                x:Name="dateStartStatusRisk"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата постановки на учет"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndStatusRisk" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата снятия с учета"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <ComboBox
+                x:Name="cmbTypeRisk" 
+                Grid.Row="3"
+                materialDesign:HintAssist.Hint="Тип группы риска" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtOsnovanieStart"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Основание постановки на учет"/>
+            <TextBox 
+                x:Name="txtOsnovanieEnd"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="5"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Основание снятия с учета"/>
+            <TextBox 
+                x:Name="txtReasonStart"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="6"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Причина постановки на учет"/>
+            <TextBox 
+                x:Name="txtReasonEnd"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="7"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Причина снятия с учета"/>
+            <TextBox 
+                x:Name="txtNoteRisk"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="8"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="9" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="9" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="sppp" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <DatePicker 
+                x:Name="dateSPPP"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Дата"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtOsnovanieSPPP"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="2"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Основание вызова"/>
+            <TextBox 
+                x:Name="txtNoteSPPP"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Примечание"/>
+            <TextBox 
+                x:Name="txtEmployeesSPPP"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="4"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Присутствовали сотрудники"/>
+            <TextBox 
+                x:Name="txtReasonSPPP"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="7"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Причина вызова"/>
+            <TextBox 
+                x:Name="txtRepresentative"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="8"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Присутствовали представители"/>
+            <TextBox 
+                x:Name="txtConclusion"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="9"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Решение"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="10" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="10" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="svo" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <DatePicker 
+                x:Name="dateStartStatusSVO"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Начало статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndStatusSVO" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Конец статуса"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtStatusSVO"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Документ основание"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="4" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="4" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <Grid x:Name="scholarship" Visibility="Hidden" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <DatePicker 
+                x:Name="dateStartScholarship"
+                Grid.Row="1" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Начало выплаты"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <DatePicker 
+                x:Name="dateEndScholarship" 
+                Grid.Row="2" 
+                Height="30" 
+                Padding="5" 
+                Margin="0,0,10,15" 
+                Style="{StaticResource MaterialDesignDatePicker}"
+                materialDesign:HintAssist.Hint="Конец выплаты"
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+            <TextBox 
+                x:Name="txtDocumentScholarship"
+                AcceptsReturn="True"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                SpellCheck.IsEnabled="True"
+                Language="ru-ru"
+                VerticalContentAlignment="Top"
+                Grid.Row="3"
+                Margin="0,0,10,15"
+                Padding="5"
+                Style="{StaticResource MaterialDesignTextBox}" 
+                materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
+                materialDesign:HintAssist.Hint="Документ основание"/>
+            <Button Click="addFile" Content="Добавить файл" Grid.Row="4" HorizontalAlignment="Left" Height="30"/>
+            <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="4" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
+        </Grid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Button Click="btnAdd" Content="Добавить" Margin="5" Height="30" Background="#3EB489" BorderBrush="#3EB489"/>
+            <Button Click="btnCancel" Content="Отмена" Margin="5" Height="30" Background="#E41613" BorderBrush="#E41613"/>
+        </StackPanel>
     </Grid>
 </Window>

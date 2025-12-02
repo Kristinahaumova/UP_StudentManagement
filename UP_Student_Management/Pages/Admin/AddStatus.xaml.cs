@@ -23,5 +23,25 @@ namespace UP_Student_Management.Pages.Admin
         {
             InitializeComponent();
         }
+
+        private void addFile(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void deleteFile(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnAdd(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnCancel(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

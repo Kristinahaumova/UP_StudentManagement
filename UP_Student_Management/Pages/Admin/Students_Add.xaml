@@ -121,7 +121,7 @@
                 materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
             <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Click="btnChooseFile" Content="Выбрать файл" Margin="5" FontSize="10" Height="20" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
-                <Button Click="btnDeleteFile" Content="Удалить выбранный файл" Margin="5" FontSize="10" Height="20" Background="#E41613" BorderBrush="#E41613"/>
+                <Button Click="btnDeleteFile" Content="❌Удалить файл" Margin="5" FontSize="10" Height="20" Foreground="Black" Background="White" BorderBrush="White"/>
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
                 <Button Click="btnAdd" Content="Добавить" Margin="5" Height="30" Background="#3EB489" BorderBrush="#3EB489"/>
