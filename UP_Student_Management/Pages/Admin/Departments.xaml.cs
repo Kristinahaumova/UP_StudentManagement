@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
@@ -20,6 +21,20 @@ namespace UP_Student_Management.Pages.Admin
         public Departments()
         {
             InitializeComponent();
+            updateList();
+        }
+        private void updateList()
+        {
+            try
+            {
+                DepartmentContext departmentContext = new DepartmentContext();
+                var allDepartments = departmentContext.AllDepartments();
+                datagridDepartments.ItemsSource = allDepartments;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+            }
         }
 
         private void Exit(object sender, RoutedEventArgs e)

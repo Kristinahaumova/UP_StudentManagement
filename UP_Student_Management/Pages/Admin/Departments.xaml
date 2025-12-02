@@ -63,9 +63,8 @@
                 HeadersVisibility="Column"
                 GridLinesVisibility="None">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Width="150"/>
-                    <DataGridTextColumn Header="Название" Width="*"/>
-                    <DataGridTextColumn Header="Дата создания" Width="150"/>
+                    <DataGridTextColumn Header="Id" Width="150" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Название" Width="*" Binding="{Binding Name}"/>
                 </DataGrid.Columns>
 
                 <DataGrid.CellStyle>
