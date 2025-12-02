@@ -23,18 +23,22 @@ namespace UP_Student_Management.Pages
             if (string.IsNullOrEmpty(login)) 
             {
                 MessageBox.Show("Заполните логин");
+                return;
             }
             if (string.IsNullOrEmpty(password)) 
             {
                 MessageBox.Show("Заполните пароль");
+                return;
             }
             if (string.IsNullOrEmpty(retryPassword)) 
             {
                 MessageBox.Show("Повторите пароль");
+                return;
             }
             if (password != retryPassword) 
             {
                 MessageBox.Show("Пароли должны совпадать");
+                return;
             }
             if (!Regex.IsMatch(login, @"^[a-zA-Z0-9]+$"))
             {

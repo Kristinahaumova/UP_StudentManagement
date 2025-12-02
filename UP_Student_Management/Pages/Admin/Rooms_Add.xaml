@@ -26,6 +26,7 @@
             materialDesign:HintAssist.Hint="Номер комнаты"/>
         <TextBox 
             x:Name="txtCapacity" 
+            PreviewTextInput="txtCapacity_PTI"
             Grid.Row="1" 
             Height="30" 
             Padding="5" 

@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
@@ -23,9 +15,52 @@ namespace UP_Student_Management.Pages.Admin
 
         private void btnAdd(object sender, RoutedEventArgs e)
         {
+            string roomNumber = txtRoomNumber.Text.Trim();
+            
+            if (string.IsNullOrEmpty(roomNumber))
+            {
+                MessageBox.Show("Заполните номер комнаты");
+                return;
+            }
 
+            string inputCapacity = txtCapacity.Text.Trim();
+
+            if (string.IsNullOrEmpty(inputCapacity))
+            {
+                MessageBox.Show("Заполните вместимость комнаты");
+                return;
+            }
+
+            int capacity = int.Parse(inputCapacity);
+            try 
+            {
+                RoomContext roomContext = new RoomContext();
+
+                var allRooms = roomContext.AllRooms();
+                bool numberExists = allRooms.Exists(u => u.Name.Equals(Name, StringComparison.OrdinalIgnoreCase));
+                if (numberExists)
+                {
+                    MessageBox.Show("Комната с таким номером уже существует.");
+                    return;
+                }
+                RoomContext newRoom = new RoomContext
+                {
+                    Name = roomNumber,
+                    Capacity = capacity
+                };
+                newRoom.Save(false);
+                //TODO: Добавить обновление списка комнат
+                Close();
+            } 
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Ошибка при добавлении комнаты: {ex}");
+            }
         }
-
+        private void txtCapacity_PTI(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !e.Text.All(char.IsDigit);
+        }
         private void btnCancel(object sender, RoutedEventArgs e)
         {
             Close();
