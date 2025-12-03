@@ -45,7 +45,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Header="Фильтрация" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard"  Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
@@ -75,41 +74,38 @@
                 GridLinesVisibility="None">
                 <DataGrid.Columns>
                     <DataGridTextColumn 
-        Header="ФИО" 
-        Width="250"
-        Binding="{Binding FullName}"/>
-
+                        Header="Id" 
+                        Width="100"
+                        Binding="{Binding Id}"/>
                     <DataGridTextColumn 
-        Header="Группа" 
-        Width="100"
-        Binding="{Binding GroupName}"/>
-
+                        Header="ФИО" 
+                        Width="250"
+                        Binding="{Binding FullName}"/>
                     <DataGridTextColumn 
-        Header="Отделение" 
-        Width="120"
-        Binding="{Binding DepartmentName}"/>
-
+                        Header="Группа" 
+                        Width="100"
+                        Binding="{Binding GroupName}"/>
                     <DataGridTextColumn 
-        Header="Телефон" 
-        Width="130"
-        Binding="{Binding Phone}"/>
-
+                        Header="Отделение" 
+                        Width="120"
+                        Binding="{Binding DepartmentName}"/>
                     <DataGridTextColumn 
-        Header="Финансирование" 
-        Width="140"
-        Binding="{Binding Financing}"/>
-
+                        Header="Телефон" 
+                        Width="130"
+                        Binding="{Binding Phone}"/>
                     <DataGridTextColumn 
-        Header="Год поступления" 
-        Width="140"
-        Binding="{Binding YearReceipts}"/>
-
+                        Header="Финансирование" 
+                        Width="140"
+                        Binding="{Binding Financing}"/>
                     <DataGridTextColumn 
-        Header="Год окончания" 
-        Width="110"
-        Binding="{Binding YearFinish}"/>
+                        Header="Год поступления" 
+                        Width="140"
+                        Binding="{Binding YearReceipts}"/>
+                    <DataGridTextColumn 
+                        Header="Год окончания" 
+                        Width="110"
+                        Binding="{Binding YearFinish}"/>
                 </DataGrid.Columns>
-
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="10,8"/>

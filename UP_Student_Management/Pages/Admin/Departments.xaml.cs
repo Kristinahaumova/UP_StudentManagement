@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using UP_Student_Management.Classes.Context;
+using UP_Student_Management.Classes.Models;
 
 namespace UP_Student_Management.Pages.Admin
 {
@@ -27,9 +17,7 @@ namespace UP_Student_Management.Pages.Admin
         {
             try
             {
-                DepartmentContext departmentContext = new DepartmentContext();
-                var allDepartments = departmentContext.AllDepartments();
-                datagridDepartments.ItemsSource = allDepartments;
+                datagridDepartments.ItemsSource = new DepartmentContext().AllDepartments();
             }
             catch (Exception ex)
             {
@@ -55,18 +43,56 @@ namespace UP_Student_Management.Pages.Admin
         private void btnAddDepartment(object sender, RoutedEventArgs e)
         {
             var dialog = new Departments_Add();
+            dialog.Closed += (s, args) => updateList();
             dialog.ShowDialog();
         }
 
         private void btnEditDepartment(object sender, RoutedEventArgs e)
         {
-            var dialog = new Departments_Edit();
-            dialog.ShowDialog();
+            if (datagridDepartments.SelectedItem is DepartmentContext selectedDepartment) 
+            {
+                var dialog = new Departments_Edit(selectedDepartment);
+                dialog.Closed += (s, args) => updateList();
+                dialog.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Выберите отделение для редактирования");
+            }
         }
 
         private void btnDeleteDepartment(object sender, RoutedEventArgs e)
         {
+            if (datagridDepartments.SelectedItem is Department selectedDepartment) 
+            {
+                var result = MessageBox.Show($"Удалить отделение '{selectedDepartment.Name}'?",
+                    "Подтверждение удаления", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
+                if (result == MessageBoxResult.Yes) 
+                {
+                    try 
+                    {
+                        if (selectedDepartment is DepartmentContext departmentContext) 
+                        {
+                            departmentContext.Delete();
+                        } 
+                        else 
+                        {
+                            MessageBox.Show("Не удалось преобразовать объект отделения.");
+                            return;
+                        }
+                        updateList();
+                    } 
+                    catch (Exception ex) 
+                    {
+                        MessageBox.Show($"Ошибка при удалении отделения: {ex.Message}");
+                    }
+                }
+            } 
+            else 
+            {
+                MessageBox.Show("Выберите отделение для удаления");
+            }
         }
     }
 }

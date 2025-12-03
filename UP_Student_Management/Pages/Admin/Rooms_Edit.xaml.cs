@@ -1,29 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
     public partial class Rooms_Edit : Window
     {
-        public Rooms_Edit()
+        private RoomContext room;
+        public Rooms_Edit(RoomContext room)
         {
             InitializeComponent();
+            this.room = room;
+            txtRoomNumber.Text = room.Name;
+            txtCapacity.Text = room.Capacity.ToString();
         }
 
         private void btnEdit(object sender, RoutedEventArgs e)
         {
+            string roomNumber = txtRoomNumber.Text.Trim();
+            if (string.IsNullOrEmpty(roomNumber))
+            {
+                MessageBox.Show("Заполните номер комнаты");
+                return;
+            }
 
+            string inputCapacity = txtCapacity.Text.Trim();
+            if (string.IsNullOrEmpty(inputCapacity))
+            {
+                MessageBox.Show("Заполните вместимость комнаты");
+                return;
+            }
+
+            int capacity = int.Parse(inputCapacity);
+
+            try
+            {
+                room.Name = roomNumber;
+                room.Capacity = capacity;
+                room.Save(true);
+                MessageBox.Show("Комната успешно обновлена");
+                this.DialogResult = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при редактировании комнаты: {ex.Message}");
+            }
         }
 
         private void btnCancel(object sender, RoutedEventArgs e)

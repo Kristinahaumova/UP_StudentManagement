@@ -1,29 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
     public partial class Departments_Edit : Window
     {
-        public Departments_Edit()
+        private DepartmentContext department;
+        public Departments_Edit(DepartmentContext department)
         {
             InitializeComponent();
+            this.department = department;
+            txtDepartmentName.Text = department.Name;
         }
 
         private void btnEdit(object sender, RoutedEventArgs e)
         {
-            
+            string departmentName = txtDepartmentName.Text.Trim();
+            if (string.IsNullOrEmpty(departmentName))
+            {
+                MessageBox.Show("Заполните название отделения");
+                return;
+            }
+            try
+            {
+                department.Name = departmentName;
+                department.Save(true);
+                MessageBox.Show("Отделение успешно обновлено");
+                this.DialogResult = true;
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Ошибка при редактировании отделения: {ex.Message}");
+            }
         }
 
         private void btnCancel(object sender, RoutedEventArgs e)

@@ -55,7 +55,7 @@
                 </StackPanel>
             </GroupBox>
             <DataGrid 
-                x:Name="datagridRooms" 
+                x:Name="dataGridRooms" 
                 Grid.Row="1"
                 Margin="10"
                 AutoGenerateColumns="False"
@@ -66,21 +66,18 @@
                 SelectionChanged="DatagridRooms_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn 
-            Header="Id" 
-            Width="150"
-            Binding="{Binding Id}"/>
-
+                        Header="Id" 
+                        Width="150"
+                        Binding="{Binding Id}"/>
                     <DataGridTextColumn 
-            Header="Номер комнаты" 
-            Width="*"
-            Binding="{Binding Name}"/>
-
+                        Header="Номер комнаты" 
+                        Width="*"
+                        Binding="{Binding Name}"/>
                     <DataGridTextColumn 
-            Header="Вместимость" 
-            Width="200"
-            Binding="{Binding Capacity}"/>
+                        Header="Вместимость" 
+                        Width="200"
+                        Binding="{Binding Capacity}"/>
                 </DataGrid.Columns>
-
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="10,8"/>

@@ -21,7 +21,6 @@ namespace UP_Student_Management.Pages.Admin
 
         private void AttachEventHandlers()
         {
-            // Обработчики для текстовых полей
             txtYear.PreviewTextInput += txtYear_PreviewTextInput;
             txtYearEnd.PreviewTextInput += txtYearEnd_PreviewTextInput;
             txtPhoneNumber.PreviewTextInput += txtPhoneNumber_PreviewTextInput;
@@ -29,12 +28,10 @@ namespace UP_Student_Management.Pages.Admin
             txtPhoneNumber.LostFocus += txtPhoneNumber_LostFocus;
             txtYear.LostFocus += txtYear_LostFocus;
 
-            // Обработчики для перехода по Enter
             txtSurname.KeyDown += txtSurname_KeyDown;
             txtName.KeyDown += txtName_KeyDown;
             txtPatronomyc.KeyDown += txtPatronomyc_KeyDown;
 
-            // Обработчики для дат
             dateCapacity.SelectedDateChanged += dateCapacity_SelectedDateChanged;
             dateExpulsion.SelectedDateChanged += dateExpulsion_SelectedDateChanged;
         }
@@ -43,22 +40,18 @@ namespace UP_Student_Management.Pages.Admin
         {
             try
             {
-                // Заполняем ComboBox для образования
                 cmbEducation.Items.Add("9 классов");
                 cmbEducation.Items.Add("11 классов");
                 cmbEducation.SelectedIndex = 1;
 
-                // Заполняем ComboBox для пола
                 cmbGender.Items.Add("М");
                 cmbGender.Items.Add("Ж");
                 cmbGender.SelectedIndex = 0;
 
-                // Заполняем ComboBox для финансирования
                 cmbFinance.Items.Add("Бюджет");
                 cmbFinance.Items.Add("Контракт");
                 cmbFinance.SelectedIndex = 0;
 
-                // Заполняем ComboBox для отделений
                 LoadDepartments();
             }
             catch (Exception ex)
@@ -94,7 +87,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Кнопка выбора файла
         private void btnChooseFile(object sender, RoutedEventArgs e)
         {
             ChooseFile();
@@ -122,7 +114,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Кнопка удаления выбранного файла
         private void btnDeleteFile(object sender, RoutedEventArgs e)
         {
             DeleteSelectedFile();
@@ -143,7 +134,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Кнопка добавления студента
         private void btnAdd(object sender, RoutedEventArgs e)
         {
             AddStudent();
@@ -153,17 +143,13 @@ namespace UP_Student_Management.Pages.Admin
         {
             try
             {
-                // Валидация обязательных полей
                 if (!ValidateForm())
                     return;
 
-                // Создаем объект студента
                 StudentContext student = CreateStudentFromForm();
 
-                // Сохраняем студента в базу данных
                 student.Save(false);
 
-                // Копируем файл в папку приложения (если выбран)
                 if (!string.IsNullOrEmpty(selectedFilePath) && File.Exists(selectedFilePath))
                 {
                     string destinationPath = CopyStudentFile(student.Id);
@@ -174,14 +160,11 @@ namespace UP_Student_Management.Pages.Admin
                     }
                 }
 
-                // Показываем сообщение об успехе
                 MessageBox.Show($"Студент {student.Surname} {student.Firstname} успешно добавлен!",
                     "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Очищаем форму
                 ClearForm();
 
-                // Закрываем окно
                 this.DialogResult = true;
                 this.Close();
             }
@@ -194,7 +177,6 @@ namespace UP_Student_Management.Pages.Admin
 
         private bool ValidateForm()
         {
-            // Проверка фамилии
             if (string.IsNullOrWhiteSpace(txtSurname.Text))
             {
                 MessageBox.Show("Пожалуйста, заполните фамилию студента", "Внимание",
@@ -203,7 +185,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка имени
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
                 MessageBox.Show("Пожалуйста, заполните имя студента", "Внимание",
@@ -212,7 +193,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка даты рождения
             if (dateCapacity.SelectedDate == null)
             {
                 MessageBox.Show("Пожалуйста, выберите дату рождения", "Внимание",
@@ -221,7 +201,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка отделения
             if (cmbDepartments.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, выберите отделение", "Внимание",
@@ -230,7 +209,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка года поступления
             if (string.IsNullOrWhiteSpace(txtYear.Text))
             {
                 MessageBox.Show("Пожалуйста, укажите год поступления", "Внимание",
@@ -239,7 +217,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка года окончания
             if (string.IsNullOrWhiteSpace(txtYearEnd.Text))
             {
                 MessageBox.Show("Пожалуйста, укажите год окончания", "Внимание",
@@ -248,7 +225,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка корректности годов
             if (!int.TryParse(txtYear.Text, out int yearReceipts) || yearReceipts < 1900 || yearReceipts > DateTime.Now.Year)
             {
                 MessageBox.Show("Год поступления должен быть числом от 1900 до текущего года", "Ошибка",
@@ -265,7 +241,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка возраста (не младше 14 лет)
             int age = DateTime.Now.Year - dateCapacity.SelectedDate.Value.Year;
             if (DateTime.Now.DayOfYear < dateCapacity.SelectedDate.Value.DayOfYear)
                 age--;
@@ -278,7 +253,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Проверка номера телефона (если заполнен)
             string phone = txtPhoneNumber.Text.Trim();
             if (!string.IsNullOrEmpty(phone))
             {
@@ -297,12 +271,10 @@ namespace UP_Student_Management.Pages.Admin
 
         private StudentContext CreateStudentFromForm()
         {
-            // Получаем данные из формы
             int yearReceipts = int.Parse(txtYear.Text);
             int yearFinish = int.Parse(txtYearEnd.Text);
             DepartmentContext selectedDepartment = (DepartmentContext)cmbDepartments.SelectedItem;
 
-            // Создаем объект студента
             return new StudentContext
             {
                 Surname = txtSurname.Text.Trim(),
@@ -352,7 +324,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Кнопка отмены
         private void btnCancel(object sender, RoutedEventArgs e)
         {
             CancelForm();
@@ -364,7 +335,6 @@ namespace UP_Student_Management.Pages.Admin
             this.Close();
         }
 
-        // Метод для очистки формы
         private void ClearForm()
         {
             txtSurname.Clear();
@@ -386,7 +356,6 @@ namespace UP_Student_Management.Pages.Admin
             selectedFilePath = string.Empty;
         }
 
-        // Обработчики для валидации ввода
         private void txtYear_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !char.IsDigit(e.Text, 0);
@@ -420,7 +389,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Автозаполнение года окончания
         private void txtYear_LostFocus(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtYearEnd.Text) && !string.IsNullOrWhiteSpace(txtYear.Text))
@@ -432,7 +400,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Обработка клавиши Enter для перехода между полями
         private void txtSurname_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -457,7 +424,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Проверка даты рождения
         private void dateCapacity_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (dateCapacity.SelectedDate.HasValue)
@@ -472,7 +438,6 @@ namespace UP_Student_Management.Pages.Admin
             }
         }
 
-        // Проверка даты отчисления
         private void dateExpulsion_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (dateExpulsion.SelectedDate.HasValue && dateCapacity.SelectedDate.HasValue)

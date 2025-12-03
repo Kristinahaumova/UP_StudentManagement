@@ -138,6 +138,7 @@
     <Compile Include="Classes\Models\Student.cs" />
     <Compile Include="Classes\Models\StudentCategory.cs" />
     <Compile Include="Classes\Models\StudentCategoryLink.cs" />
+    <Compile Include="Classes\Models\StudentDisplay.cs" />
     <Compile Include="Classes\Models\User.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
