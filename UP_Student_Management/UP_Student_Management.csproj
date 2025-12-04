@@ -61,6 +61,10 @@
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.16.0.18925.20022\lib\net40\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.77\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
@@ -135,9 +139,15 @@
     <Compile Include="Classes\Interfaces\IUser.cs" />
     <Compile Include="Classes\Models\Department.cs" />
     <Compile Include="Classes\Models\Room.cs" />
+    <Compile Include="Classes\Models\StatusModels\Hostel.cs" />
+    <Compile Include="Classes\Models\StatusModels\Invalid.cs" />
+    <Compile Include="Classes\Models\StatusModels\Ovz.cs" />
+    <Compile Include="Classes\Models\StatusModels\RiskGroup.cs" />
+    <Compile Include="Classes\Models\StatusModels\Scholarship.cs" />
+    <Compile Include="Classes\Models\StatusModels\Sirota.cs" />
+    <Compile Include="Classes\Models\StatusModels\SPPP.cs" />
+    <Compile Include="Classes\Models\StatusModels\SVO.cs" />
     <Compile Include="Classes\Models\Student.cs" />
-    <Compile Include="Classes\Models\StudentCategory.cs" />
-    <Compile Include="Classes\Models\StudentCategoryLink.cs" />
     <Compile Include="Classes\Models\StudentDisplay.cs" />
     <Compile Include="Classes\Models\User.cs" />
     <Compile Include="MainWindow.xaml.cs">

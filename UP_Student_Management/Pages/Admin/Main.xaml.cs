@@ -35,6 +35,7 @@ namespace UP_Student_Management.Pages.Admin
             InitializeComponent();
             UpdateListRequested += UpdateStudentsList;
             updateList();
+            LoadCombobox();
         }
         private void updateList()
         {
@@ -87,20 +88,57 @@ namespace UP_Student_Management.Pages.Admin
                 if (item is StudentDisplay student)
                 {
                     string searchQuery = txtSearch.Text.ToLower();
-                    return string.IsNullOrEmpty(searchQuery) ||
-                           student.Surname.ToLower().Contains(searchQuery) ||
-                           student.Firstname.ToLower().Contains(searchQuery) ||
-                           student.Patronomyc.ToLower().Contains(searchQuery);
+                    bool matchesSearch = string.IsNullOrEmpty(searchQuery) ||
+                                        student.Surname.ToLower().Contains(searchQuery) ||
+                                        student.Firstname.ToLower().Contains(searchQuery) ||
+                                        student.Patronomyc.ToLower().Contains(searchQuery);
+
+                    bool matchesDepartment = true;
+                    if (cmbDepartmentFilter.SelectedItem != null && cmbDepartmentFilter.SelectedIndex > 0)
+                    {
+                        var selectedDepartment = (DepartmentContext)cmbDepartmentFilter.SelectedItem;
+                        matchesDepartment = student.DepartmentId == selectedDepartment.Id;
+                    }
+
+                    return matchesSearch && matchesDepartment;
                 }
                 return false;
             };
         }
+        private void LoadCombobox() 
+        {
+            LoadDepartments();
+        }
+        private void LoadDepartments()
+        {
+            try
+            {
+                var departmentContext = new DepartmentContext();
+                var departments = departmentContext.AllDepartments();
 
+                cmbDepartmentFilter.Items.Clear();
+                cmbDepartmentFilter.Items.Add("Выберите отделение");
+                foreach (var department in departments)
+                {
+                    cmbDepartmentFilter.Items.Add(department);
+                }
+
+                cmbDepartmentFilter.DisplayMemberPath = "Name";
+                cmbDepartmentFilter.SelectedValuePath = "Id";
+
+                if (cmbDepartmentFilter.Items.Count > 0)
+                    cmbDepartmentFilter.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки отделений: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private void Exit(object sender, RoutedEventArgs e)
         {
             MainWindow.init.OpenPage(new Pages.Login());
         }     
-
         private void btnAddStudent(object sender, RoutedEventArgs e)
         {
             var dialog = new Students_Add();
@@ -185,6 +223,15 @@ namespace UP_Student_Management.Pages.Admin
         {
             var dialog = new CreateReport();
             dialog.ShowDialog();
+        }
+        private void cmbDepartmentFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterStudents();
+        }
+
+        private void cmbStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterStudents();
         }
     }
 }

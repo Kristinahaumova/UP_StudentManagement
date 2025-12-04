@@ -20,7 +20,7 @@
             Padding="5" 
             Margin="0,0,10,15" 
             materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
-        <Grid x:Name="sirota" Visibility="Hidden"  Grid.Row="1">
+        <Grid x:Name="sirota" Visibility="Hidden" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -79,7 +79,7 @@
             <Button Click="addFile" Content="Добавить файл" Grid.Row="5" HorizontalAlignment="Left" Height="30"/>
             <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="5" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
         </Grid>
-        <Grid x:Name="invalid" Visibility="Hidden" Grid.Row="1">
+        <Grid x:Name="invalid" Visibility="Hidden"  Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>

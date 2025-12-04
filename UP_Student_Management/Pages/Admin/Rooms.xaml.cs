@@ -105,5 +105,10 @@ namespace UP_Student_Management.Pages.Admin
                 MessageBox.Show("Выберите комнату для удаления");
             }
         }
+
+        private void createRecord(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

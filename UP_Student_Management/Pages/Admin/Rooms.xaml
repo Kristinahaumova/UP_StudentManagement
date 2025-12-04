@@ -52,6 +52,7 @@
                     <Button Content="Добавить" Margin="5" Click="btnAddRooms" Background="#3EB489" BorderBrush="#3EB489"/>
                     <Button Content="Редактировать" Margin="5" Click="btnEditRooms" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
                     <Button Content="Удалить" Margin="5" Click="btnDeleteRooms" Background="#E41613" BorderBrush="#E41613"/>
+                    <Button Click="createRecord" Content="Создать отчет" Background="#FF7514" BorderBrush="#FF7514"  Margin="5"/>
                 </StackPanel>
             </GroupBox>
             <DataGrid 
