@@ -129,6 +129,14 @@
     </Compile>
     <Compile Include="Classes\Common\Connection.cs" />
     <Compile Include="Classes\Common\Report.cs" />
+    <Compile Include="Classes\Context\StatusContext\HostelContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\InvalidContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\OvzContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\RiskGroupContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\ScholarshipContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\SirotaContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\SPPPContext.cs" />
+    <Compile Include="Classes\Context\StatusContext\SVOContext.cs" />
     <Compile Include="Classes\Context\StudentContext.cs" />
     <Compile Include="Classes\Context\DepartmentContext.cs" />
     <Compile Include="Classes\Context\RoomContext.cs" />
@@ -137,6 +145,14 @@
     <Compile Include="Classes\Interfaces\IRoom.cs" />
     <Compile Include="Classes\Interfaces\IStudent.cs" />
     <Compile Include="Classes\Interfaces\IUser.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\IHostel.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\IInvalid.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\IOvz.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\IRiskGroup.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\IScholarship.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\ISirota.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\ISPPP.cs" />
+    <Compile Include="Classes\Interfaces\StatusInterfaces\ISVO.cs" />
     <Compile Include="Classes\Models\Department.cs" />
     <Compile Include="Classes\Models\Room.cs" />
     <Compile Include="Classes\Models\StatusModels\Hostel.cs" />
@@ -149,6 +165,7 @@
     <Compile Include="Classes\Models\StatusModels\SVO.cs" />
     <Compile Include="Classes\Models\Student.cs" />
     <Compile Include="Classes\Models\StudentDisplay.cs" />
+    <Compile Include="Classes\Models\StudentInRoomDisplay.cs" />
     <Compile Include="Classes\Models\User.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

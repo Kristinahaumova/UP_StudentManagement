@@ -24,5 +24,6 @@ namespace UP_Student_Management.Classes.Models
         public DateTime BirthDate { get; set; }
         public string Sex { get; set; }
         public string Education { get; set; }
+        public string Status { get; set; }
     }
 }

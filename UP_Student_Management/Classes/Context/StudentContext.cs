@@ -9,7 +9,6 @@ namespace UP_Student_Management.Classes.Context
 {
     public class StudentContext : Student,IStudent
     {
-        // Возвращает всех студентов
         public List<StudentContext> AllStudents()
         {
             List<StudentContext> allStudents = new List<StudentContext>();
@@ -20,7 +19,7 @@ namespace UP_Student_Management.Classes.Context
                     Id, Firstname, Surname, BirthDate, Patronomyc, 
                     Sex, Phone, Education, GroupName, isBudget,
                     YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, FilePath, DepartmentId, RoomId
+                    DataDeductions, Note, FilePath, DepartmentId
                 FROM `Students`
                 ORDER BY Surname, Firstname";
 
@@ -41,7 +40,6 @@ namespace UP_Student_Management.Classes.Context
                     DepartmentId = data.GetInt32("DepartmentId")
                 };
 
-                // Обработка полей YEAR - читаем как int и преобразуем в DateTime
                 if (!data.IsDBNull(data.GetOrdinal("YearReceipts")))
                 {
                     int yearReceipts = data.GetInt32("YearReceipts");
@@ -62,7 +60,6 @@ namespace UP_Student_Management.Classes.Context
                     student.YearFinish = DateTime.MinValue;
                 }
 
-                // Обработка nullable полей
                 if (!data.IsDBNull(data.GetOrdinal("Patronomyc")))
                     student.Patronomyc = data.GetString("Patronomyc");
 
@@ -81,9 +78,6 @@ namespace UP_Student_Management.Classes.Context
                 if (!data.IsDBNull(data.GetOrdinal("FilePath")))
                     student.FilePath = data.GetString("FilePath");
 
-                if (!data.IsDBNull(data.GetOrdinal("RoomId")))
-                    student.RoomId = data.GetInt32("RoomId");
-
                 allStudents.Add(student);
             }
 
@@ -92,7 +86,6 @@ namespace UP_Student_Management.Classes.Context
             return allStudents;
         }
 
-        // Сохранение студента (вставка или обновление)
         public void Save(bool Update = false)
         {
             MySqlConnection connection = Connection.OpenConnection();
@@ -101,7 +94,6 @@ namespace UP_Student_Management.Classes.Context
             {
                 if (Update)
                 {
-                    // Обновление существующей записи
                     string query = @"
                         UPDATE `Students` 
                         SET 
@@ -120,8 +112,7 @@ namespace UP_Student_Management.Classes.Context
                             DataDeductions = @dataDeductions,
                             Note = @note,
                             FilePath = @filePath,
-                            DepartmentId = @departmentId,
-                            RoomId = @roomId
+                            DepartmentId = @departmentId
                         WHERE Id = @id";
 
                     MySqlCommand command = new MySqlCommand(query, connection);
@@ -132,23 +123,21 @@ namespace UP_Student_Management.Classes.Context
                 }
                 else
                 {
-                    // Вставка новой записи
                     string query = @"
                         INSERT INTO `Students` 
                         (Firstname, Surname, BirthDate, Patronomyc, Sex, Phone, 
                          Education, GroupName, isBudget, YearReceipts, YearFinish,
-                         DeductionsInfo, DataDeductions, Note, FilePath, DepartmentId, RoomId) 
+                         DeductionsInfo, DataDeductions, Note, FilePath, DepartmentId) 
                         VALUES 
                         (@firstname, @surname, @birthdate, @patronomyc, @sex, @phone,
                          @education, @groupName, @isBudget, @yearReceipts, @yearFinish,
-                         @deductionsInfo, @dataDeductions, @note, @filePath, @departmentId, @roomId)";
+                         @deductionsInfo, @dataDeductions, @note, @filePath, @departmentId)";
 
                     MySqlCommand command = new MySqlCommand(query, connection);
                     AddParameters(command);
 
                     command.ExecuteNonQuery();
 
-                    // Получаем ID вставленной записи
                     this.Id = (int)command.LastInsertedId;
                 }
             }
@@ -162,7 +151,6 @@ namespace UP_Student_Management.Classes.Context
             }
         }
 
-        // Вспомогательный метод для безопасного чтения строк
         private string GetSafeString(MySqlDataReader data, string columnName)
         {
             int ordinal = data.GetOrdinal(columnName);
@@ -173,7 +161,6 @@ namespace UP_Student_Management.Classes.Context
             return null;
         }
 
-        // Вспомогательный метод для добавления параметров
         private void AddParameters(MySqlCommand command)
         {
             command.Parameters.AddWithValue("@firstname", this.Firstname ?? (object)DBNull.Value);
@@ -186,7 +173,6 @@ namespace UP_Student_Management.Classes.Context
             command.Parameters.AddWithValue("@groupName", this.GroupName ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@isBudget", this.isBudget);
 
-            // Годы как int
             command.Parameters.AddWithValue("@yearReceipts", this.YearReceipts.Year);
             command.Parameters.AddWithValue("@yearFinish", this.YearFinish.Year);
 
@@ -196,10 +182,8 @@ namespace UP_Student_Management.Classes.Context
             command.Parameters.AddWithValue("@note", this.Note ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@filePath", this.FilePath ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@departmentId", this.DepartmentId);
-            command.Parameters.AddWithValue("@roomId", this.RoomId.HasValue ? (object)this.RoomId.Value : DBNull.Value);
         }
 
-        // Удаление студента
         public void Delete()
         {
             MySqlConnection connection = Connection.OpenConnection();
@@ -222,9 +206,6 @@ namespace UP_Student_Management.Classes.Context
             }
         }
 
-        // Остальные методы с исправлением чтения YEAR полей...
-
-        // Вспомогательный метод для маппинга данных из DataReader
         private StudentContext MapDataReaderToStudent(MySqlDataReader data)
         {
             StudentContext student = new StudentContext
@@ -240,7 +221,6 @@ namespace UP_Student_Management.Classes.Context
                 DepartmentId = data.GetInt32("DepartmentId")
             };
 
-            // Обработка полей YEAR
             if (!data.IsDBNull(data.GetOrdinal("YearReceipts")))
             {
                 int yearReceipts = data.GetInt32("YearReceipts");
@@ -270,9 +250,6 @@ namespace UP_Student_Management.Classes.Context
 
             if (!data.IsDBNull(data.GetOrdinal("FilePath")))
                 student.FilePath = data.GetString("FilePath");
-
-            if (!data.IsDBNull(data.GetOrdinal("RoomId")))
-                student.RoomId = data.GetInt32("RoomId");
 
             return student;
         }

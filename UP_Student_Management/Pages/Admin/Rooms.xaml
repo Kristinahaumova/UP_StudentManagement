@@ -108,11 +108,11 @@
                 HeadersVisibility="Column"
                 GridLinesVisibility="None">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Студент" Width="*"/>
-                    <DataGridTextColumn Header="Группа" Width="200"/>
-                    <DataGridTextColumn Header="Дата заселения" Width="200"/>
-                    <DataGridTextColumn Header="Дата выселения" Width="200"/>
-                    <DataGridTextColumn Header="Статус" Width="250"/>
+                    <DataGridTextColumn Header="Студент" Width="*" Binding="{Binding FullName}"/>
+                    <DataGridTextColumn Header="Группа" Width="200" Binding="{Binding GroupName}"/>
+                    <DataGridTextColumn Header="Дата заселения" Width="200" Binding="{Binding StartDate}"/>
+                    <DataGridTextColumn Header="Дата выселения" Width="200" Binding="{Binding EndDate}"/>
+                    <DataGridTextColumn Header="Примечание" Width="250" Binding="{Binding Status}"/>
                 </DataGrid.Columns>
 
                 <DataGrid.CellStyle>

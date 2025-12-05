@@ -212,7 +212,7 @@
             <Button Click="addFile" Content="Добавить файл" Grid.Row="5" HorizontalAlignment="Left" Height="30"/>
             <Button Click="deleteFile" Content="❌Удалить файл" Grid.Row="5" HorizontalAlignment="Right" Height="30" Foreground="Black" Background="white" BorderBrush="White"/>
         </Grid>
-        <Grid x:Name="hostel" Visibility="Hidden" Grid.Row="1">
+        <Grid x:Name="hostel"  Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -240,18 +240,11 @@
                 Style="{StaticResource MaterialDesignDatePicker}"
                 materialDesign:HintAssist.Hint="Дата выселения"
                 materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
-            <TextBox 
-                x:Name="txtRoom"
-                AcceptsReturn="True"
-                VerticalScrollBarVisibility="Auto"
-                TextWrapping="Wrap"
-                SpellCheck.IsEnabled="True"
-                Language="ru-ru"
-                VerticalContentAlignment="Top"
+            <ComboBox 
+                x:Name="cmbRoom"
                 Grid.Row="3"
                 Margin="0,0,10,15"
                 Padding="5"
-                Style="{StaticResource MaterialDesignTextBox}" 
                 materialDesign:TextFieldAssist.UnderlineBrush="#0066CC" 
                 materialDesign:HintAssist.Hint="Комната"/>
             <TextBox 

@@ -10,7 +10,7 @@ namespace UP_Student_Management.Classes.Common
 {
     public class Connection
     {
-        readonly static string connection = "server=localhost;port=3306;database=manage_student;user=root;";
+        readonly static string connection = "server=localhost;port=3306;database=StudentManagement;user=root;";
         public static MySqlConnection OpenConnection()
         {
             try

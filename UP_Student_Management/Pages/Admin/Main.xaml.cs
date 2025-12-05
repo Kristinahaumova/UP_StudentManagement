@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using UP_Student_Management.Classes.Context;
+using UP_Student_Management.Classes.Context.StatusContext;
 using UP_Student_Management.Classes.Models;
 
 namespace UP_Student_Management.Pages.Admin
@@ -45,6 +46,15 @@ namespace UP_Student_Management.Pages.Admin
                 var allStudentsData = studentContext.AllStudents();
                 var allDepartments = new DepartmentContext().AllDepartments();
 
+                var sirotaContext = new SirotaContext();
+                var invalidContext = new InvalidContext();
+                var hostelContext = new HostelContext();
+                var ovzContext = new OvzContext();
+                var riskGroupContext = new RiskGroupContext();
+                var scholarshipContext = new ScholarshipContext();
+                var spppContext = new SPPPContext();
+                var svoContext = new SVOContext();
+
                 var displayData = allStudentsData
                     .Join(allDepartments,
                         student => student.DepartmentId,
@@ -66,7 +76,8 @@ namespace UP_Student_Management.Pages.Admin
                             isBudget = student.isBudget,
                             BirthDate = student.BirthDate,
                             Sex = student.Sex,
-                            Education = student.Education
+                            Education = student.Education,
+                            Status = GetStudentStatus(student.Id, sirotaContext, invalidContext, hostelContext, ovzContext, riskGroupContext, scholarshipContext, spppContext, svoContext)
                         })
                     .ToList();
 
@@ -81,6 +92,20 @@ namespace UP_Student_Management.Pages.Admin
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
             }
         }
+        private string GetStudentStatus(int studentId, SirotaContext sirotaContext, InvalidContext invalidContext, 
+            HostelContext hostelContext, OvzContext ovzContext, RiskGroupContext riskGroupContext, 
+            ScholarshipContext scholarshipContext, SPPPContext spppContext, SVOContext svoContext) 
+        {
+            if (sirotaContext.AllSirota().Any(s => s.StudentId == studentId)) return "Сирота";
+            if (invalidContext.AllInvalid().Any(i => i.StudentId == studentId)) return "Инвалид";
+            if (hostelContext.AllHostel().Any(i => i.StudentId == studentId)) return "Общежитие";
+            if (ovzContext.AllOvz().Any(i => i.StudentId == studentId)) return "ОВЗ";
+            if (riskGroupContext.AllRiskGroup().Any(i => i.StudentId == studentId)) return "Группа риска";
+            if (scholarshipContext.AllScholarship().Any(i => i.StudentId == studentId)) return "Стипендия";
+            if (spppContext.AllSPPP().Any(i => i.StudentId == studentId)) return "СППП";
+            if (svoContext.AllSVO().Any(i => i.StudentId == studentId)) return "СВО";
+            return "Без статуса";
+        }
         private void FilterStudents()
         {
             studentsView.Filter = item =>
@@ -94,13 +119,19 @@ namespace UP_Student_Management.Pages.Admin
                                         student.Patronomyc.ToLower().Contains(searchQuery);
 
                     bool matchesDepartment = true;
+                    bool matchesStatus = true;
                     if (cmbDepartmentFilter.SelectedItem != null && cmbDepartmentFilter.SelectedIndex > 0)
                     {
                         var selectedDepartment = (DepartmentContext)cmbDepartmentFilter.SelectedItem;
                         matchesDepartment = student.DepartmentId == selectedDepartment.Id;
                     }
+                    if (cmbStatusFilter.SelectedItem != null && cmbStatusFilter.SelectedIndex > 0)
+                    {
+                        string selectedStatus = cmbStatusFilter.SelectedItem.ToString();
+                        matchesStatus = student.Status == selectedStatus;
+                    }
 
-                    return matchesSearch && matchesDepartment;
+                    return matchesSearch && matchesDepartment && matchesStatus;
                 }
                 return false;
             };
@@ -108,6 +139,7 @@ namespace UP_Student_Management.Pages.Admin
         private void LoadCombobox() 
         {
             LoadDepartments();
+            LoadStatuses();
         }
         private void LoadDepartments()
         {
@@ -135,6 +167,20 @@ namespace UP_Student_Management.Pages.Admin
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void LoadStatuses()
+        {
+            cmbStatusFilter.Items.Clear();
+            cmbStatusFilter.Items.Add("Все");
+            cmbStatusFilter.Items.Add("Сирота");
+            cmbStatusFilter.Items.Add("Инвалид");
+            cmbStatusFilter.Items.Add("Общежитие");
+            cmbStatusFilter.Items.Add("ОВЗ");
+            cmbStatusFilter.Items.Add("Группа риска");
+            cmbStatusFilter.Items.Add("Стипендия");
+            cmbStatusFilter.Items.Add("СППП");
+            cmbStatusFilter.Items.Add("СВО");
+            cmbStatusFilter.SelectedIndex = 0;
+        }
         private void Exit(object sender, RoutedEventArgs e)
         {
             MainWindow.init.OpenPage(new Pages.Login());
@@ -147,9 +193,21 @@ namespace UP_Student_Management.Pages.Admin
         }
         private void btnAddStatus(object sender, RoutedEventArgs e)
         {
-            //TODO:Передавать пользователя
-            var dialog = new AddStatus();
-            dialog.ShowDialog();
+            if (datagridStudents.SelectedItem is StudentDisplay selectedDisplay)
+            {
+                var studentContext = new StudentContext();
+                var student = studentContext.AllStudents().FirstOrDefault(s => s.Id == selectedDisplay.Id);
+                if (student != null)
+                {
+                    var dialog = new AddStatus(student);
+                    dialog.Closed += (s, args) => updateList();
+                    dialog.ShowDialog();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите студента для добавления статуса");
+            }
         }
         private void btnEditStudent(object sender, RoutedEventArgs e)
         {
