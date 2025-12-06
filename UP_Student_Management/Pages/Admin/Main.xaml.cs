@@ -44,10 +44,6 @@ namespace UP_Student_Management.Pages.Admin
                 gbWhatDo.Visibility = Visibility.Hidden;
             }
         }
-        private void checkAccess() 
-        {
-            
-        }
         private void updateList()
         {
             try

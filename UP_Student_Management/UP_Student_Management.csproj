@@ -175,10 +175,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Admin\CreateReport.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\Admin\Departments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -227,9 +223,6 @@
   <ItemGroup>
     <Compile Include="Pages\Admin\AddStatus.xaml.cs">
       <DependentUpon>AddStatus.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Admin\CreateReport.xaml.cs">
-      <DependentUpon>CreateReport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Admin\Departments.xaml.cs">
       <DependentUpon>Departments.xaml</DependentUpon>
