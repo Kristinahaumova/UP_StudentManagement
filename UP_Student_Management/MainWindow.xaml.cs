@@ -8,6 +8,7 @@ namespace UP_Student_Management
     public partial class MainWindow : Window
     {
         public static MainWindow init;
+        public static bool IsAdmin { get; set; }
         public MainWindow()
         {
             InitializeComponent();

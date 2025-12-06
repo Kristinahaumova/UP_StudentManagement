@@ -14,6 +14,11 @@ namespace UP_Student_Management.Pages.Admin
         {
             InitializeComponent();
             updateList();
+
+            if (!MainWindow.IsAdmin) 
+            {
+                gbWhatDo.Visibility = Visibility.Hidden;
+            }
         }
 
         private void updateList()
@@ -143,7 +148,57 @@ namespace UP_Student_Management.Pages.Admin
         }
         private void createRecord(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                var excelApp = new Microsoft.Office.Interop.Excel.Application();
+                excelApp.Visible = true;
+                var workbook = excelApp.Workbooks.Add();
+                var worksheet = workbook.Sheets[1];
 
+                worksheet.Cells[1, 1] = "Комната";
+                worksheet.Cells[1, 2] = "Студент";
+                worksheet.Cells[1, 3] = "Группа";
+                worksheet.Cells[1, 4] = "Дата заселения";
+                worksheet.Cells[1, 5] = "Дата выселения";
+                worksheet.Cells[1, 6] = "Примечание";
+
+                var hostelContext = new HostelContext();
+                var allHostel = hostelContext.AllHostel();
+
+                var studentContext = new StudentContext();
+                var allStudents = studentContext.AllStudents();
+
+                var roomContext = new RoomContext();
+                var allRooms = roomContext.AllRooms();
+
+                int row = 2;
+                foreach (var hostel in allHostel)
+                {
+                    var student = allStudents.FirstOrDefault(s => s.Id == hostel.StudentId);
+                    var room = allRooms.FirstOrDefault(r => r.Id == hostel.RoomId);
+
+                    worksheet.Cells[row, 1] = room?.Name ?? "Неизвестно";
+                    worksheet.Cells[row, 2] = student != null ? $"{student.Surname} {student.Firstname} {student.Patronomyc}" : "Неизвестно";
+                    worksheet.Cells[row, 3] = student?.GroupName ?? "Неизвестно";
+                    worksheet.Cells[row, 4] = hostel.StartDate.ToString("dd.MM.yyyy");
+                    worksheet.Cells[row, 5] = hostel.EndDate?.ToString("dd.MM.yyyy") ?? "";
+                    worksheet.Cells[row, 6] = hostel.Note ?? "";
+
+                    row++;
+                }
+
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string filePath = System.IO.Path.Combine(desktopPath, "Отчет о студентах проживающих в общежитии.xlsx");
+                workbook.SaveAs(filePath);
+                workbook.Close();
+                excelApp.Quit();
+
+                MessageBox.Show("Отчет по общежитию создан на рабочем столе.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка создания отчета: {ex.Message}");
+            }
         }
     }
 }

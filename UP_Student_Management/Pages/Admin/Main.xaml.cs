@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -37,6 +38,15 @@ namespace UP_Student_Management.Pages.Admin
             UpdateListRequested += UpdateStudentsList;
             updateList();
             LoadCombobox();
+
+            if (!MainWindow.IsAdmin) 
+            {
+                gbWhatDo.Visibility = Visibility.Hidden;
+            }
+        }
+        private void checkAccess() 
+        {
+            
         }
         private void updateList()
         {
@@ -279,8 +289,134 @@ namespace UP_Student_Management.Pages.Admin
 
         private void createRecord(object sender, RoutedEventArgs e)
         {
-            var dialog = new CreateReport();
-            dialog.ShowDialog();
+            if (datagridStudents.SelectedItem is StudentDisplay selectedStudent)
+            {
+                try
+                {
+                    var excelApp = new Microsoft.Office.Interop.Excel.Application();
+                    excelApp.Visible = true;
+                    var workbook = excelApp.Workbooks.Add();
+                    var worksheet = workbook.Sheets[1];
+
+                    worksheet.Cells[1, 1] = "ФИО";
+                    worksheet.Cells[1, 2] = selectedStudent.FullName;
+                    worksheet.Cells[2, 1] = "Группа";
+                    worksheet.Cells[2, 2] = selectedStudent.GroupName;
+                    worksheet.Cells[3, 1] = "Отделение";
+                    worksheet.Cells[3, 2] = selectedStudent.DepartmentName;
+                    worksheet.Cells[4, 1] = "Телефон";
+                    worksheet.Cells[4, 2] = selectedStudent.Phone;
+                    worksheet.Cells[5, 1] = "Финансирование";
+                    worksheet.Cells[5, 2] = selectedStudent.Financing;
+                    worksheet.Cells[6, 1] = "Год поступления";
+                    worksheet.Cells[6, 2] = selectedStudent.YearReceipts;
+                    worksheet.Cells[7, 1] = "Год окончания";
+                    worksheet.Cells[7, 2] = selectedStudent.YearFinish;
+
+                    var statuses = GetStudentStatuses(selectedStudent.Id);
+                    int row = 9;
+                    worksheet.Cells[row, 1] = "Статусы студента:";
+                    row++;
+                    foreach (var status in statuses)
+                    {
+                        worksheet.Cells[row, 1] = status.StatusType;
+                        worksheet.Cells[row, 2] = status.Note;
+                        worksheet.Cells[row, 3] = status.StartDate.ToString("dd.MM.yyyy");
+                        worksheet.Cells[row, 4] = status.EndDate?.ToString("dd.MM.yyyy") ?? "";
+                        row++;
+                    }
+                    string desctopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    string filePath = System.IO.Path.Combine(desctopPath, "Отчет по студенту " + selectedStudent.Surname + ".xlsx");
+                    workbook.SaveAs(filePath);
+                    workbook.Close();
+                    excelApp.Quit();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка создания отчета: {ex.Message}");
+                }
+            }
+            else 
+            {
+                MessageBox.Show("Выберите студента для создания отчета");
+            }
+        }
+        private List<StudentStatus> GetStudentStatuses(int studentId)
+        {
+            var statuses = new List<StudentStatus>();
+
+            var sirotaContext = new SirotaContext();
+            var invalidContext = new InvalidContext();
+            var hostelContext = new HostelContext();
+            var ovzContext = new OvzContext();
+            var riskGroupContext = new RiskGroupContext();
+            var scholarshipContext = new ScholarshipContext();
+            var spppContext = new SPPPContext();
+            var svoContext = new SVOContext();
+
+            statuses.AddRange(sirotaContext.AllSirota().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "Сирота",
+                Note = i.Note,
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+            statuses.AddRange(invalidContext.AllInvalid().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "Инвалид",
+                Note = i.Note,
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+            statuses.AddRange(hostelContext.AllHostel().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "Общежитие",
+                Note = i.Note,
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+            statuses.AddRange(ovzContext.AllOvz().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "ОВЗ",
+                Note = i.Note,
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+            statuses.AddRange(riskGroupContext.AllRiskGroup().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "Группа риска",
+                Note = i.Note,
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+            statuses.AddRange(scholarshipContext.AllScholarship().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "Стипендия",
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+            statuses.AddRange(spppContext.AllSPPP().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "СППП",
+                Note = i.Note,
+                StartDate = i.Date
+            }));
+
+            statuses.AddRange(svoContext.AllSVO().Where(i => i.StudentId == studentId).Select(i => new StudentStatus
+            {
+                StatusType = "СВО",
+                StartDate = i.StartDate,
+                EndDate = i.EndDate
+            }));
+
+
+            return statuses;
         }
         private void cmbDepartmentFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

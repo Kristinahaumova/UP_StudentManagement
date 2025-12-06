@@ -54,13 +54,13 @@
                     <ComboBox x:Name="cmbStatusFilter" SelectionChanged="cmbStatusFilter_SelectionChanged" materialDesign:HintAssist.Hint="Статус" Margin="10" Width="140" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Grid.Row="1" Header="Что сделать?" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard" Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
+            <GroupBox Grid.Row="1" x:Name="gbWhatDo" Header="Что сделать?" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard" Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Добавить" Margin="5" Click="btnAddStudent" Background="#3EB489" BorderBrush="#3EB489"/>
-                    <Button Content="Редактировать" Margin="5" Click="btnEditStudent" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
-                    <Button Content="Добавить статус" Margin="5" Click="btnAddStatus" Background="#FCE883" BorderBrush="#FCE883"/>
-                    <Button Content="Удалить" Margin="5" Click="btnDeleteStudent" Background="#E41613" BorderBrush="#E41613"/>
-                    <Button Click="createRecord" Content="Создать отчет" Background="#FF7514" BorderBrush="#FF7514"  Margin="5"/>
+                    <Button Content="Добавить" x:Name="btnAddStudentName" Margin="5" Click="btnAddStudent" Background="#3EB489" BorderBrush="#3EB489"/>
+                    <Button Content="Редактировать" x:Name="btnEditStudentName" Margin="5" Click="btnEditStudent" Background="#9EA1A2" BorderBrush="#9EA1A2"/>
+                    <Button Content="Добавить статус" x:Name="btnAddStatusName" Margin="5" Click="btnAddStatus" Background="#FCE883" BorderBrush="#FCE883"/>
+                    <Button Content="Удалить" x:Name="btnDeleteStudentName" Margin="5" Click="btnDeleteStudent" Background="#E41613" BorderBrush="#E41613"/>
+                    <Button Click="createRecord" x:Name="btnCreateRecordName" Content="Создать отчет" Background="#FF7514" BorderBrush="#FF7514"  Margin="5"/>
                 </StackPanel>
             </GroupBox>
             <DataGrid 

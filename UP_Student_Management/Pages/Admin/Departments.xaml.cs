@@ -12,6 +12,11 @@ namespace UP_Student_Management.Pages.Admin
         {
             InitializeComponent();
             updateList();
+
+            if (!MainWindow.IsAdmin)
+            {
+                gbWhatDo.Visibility = Visibility.Hidden;
+            }
         }
         private void updateList()
         {

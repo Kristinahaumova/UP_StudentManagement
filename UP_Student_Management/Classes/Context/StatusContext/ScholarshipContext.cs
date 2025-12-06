@@ -1,9 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UP_Student_Management.Classes.Common;
 using UP_Student_Management.Classes.Interfaces.StatusInterfaces;
 using UP_Student_Management.Classes.Models.StatusModels;

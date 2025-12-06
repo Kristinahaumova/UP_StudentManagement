@@ -47,7 +47,7 @@
                 <RowDefinition Height="1.4*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <GroupBox Grid.Row="0" Header="Что сделать?" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard" Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
+            <GroupBox Grid.Row="0" x:Name="gbWhatDo" Header="Что сделать?" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard" Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Добавить" Margin="5" Click="btnAddRooms" Background="#3EB489" BorderBrush="#3EB489"/>
                     <Button Content="Редактировать" Margin="5" Click="btnEditRooms" Background="#9EA1A2" BorderBrush="#9EA1A2"/>

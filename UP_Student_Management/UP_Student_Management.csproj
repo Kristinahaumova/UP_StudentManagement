@@ -128,7 +128,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\Common\Connection.cs" />
-    <Compile Include="Classes\Common\Report.cs" />
     <Compile Include="Classes\Context\StatusContext\HostelContext.cs" />
     <Compile Include="Classes\Context\StatusContext\InvalidContext.cs" />
     <Compile Include="Classes\Context\StatusContext\OvzContext.cs" />
@@ -166,6 +165,7 @@
     <Compile Include="Classes\Models\Student.cs" />
     <Compile Include="Classes\Models\StudentDisplay.cs" />
     <Compile Include="Classes\Models\StudentInRoomDisplay.cs" />
+    <Compile Include="Classes\Models\StudentStatus.cs" />
     <Compile Include="Classes\Models\User.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
