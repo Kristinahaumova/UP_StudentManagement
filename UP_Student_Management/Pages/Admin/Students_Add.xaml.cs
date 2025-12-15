@@ -1,22 +1,36 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
+    // Класс для хранения информации о выбранных файлах
+    public class SelectedFile
+    {
+        public string FilePath { get; set; }
+        public string FileName { get; set; }
+        public string FileExtension { get; set; }
+    }
+
     public partial class Students_Add : Window
     {
-        private string selectedFilePath = string.Empty;
+        private ObservableCollection<SelectedFile> selectedFiles = new ObservableCollection<SelectedFile>();
 
         public Students_Add()
         {
             InitializeComponent();
             LoadComboBoxData();
             AttachEventHandlers();
+
+            // Привязываем коллекцию файлов к ListBox
+            lstFiles.ItemsSource = selectedFiles;
         }
 
         private void AttachEventHandlers()
@@ -24,6 +38,11 @@ namespace UP_Student_Management.Pages.Admin
             txtYear.PreviewTextInput += txtYear_PreviewTextInput;
             txtYearEnd.PreviewTextInput += txtYearEnd_PreviewTextInput;
             txtPhoneNumber.PreviewTextInput += txtPhoneNumber_PreviewTextInput;
+
+            // Валидация для фамилии, имени, отчества
+            txtSurname.PreviewTextInput += txtSurname_PreviewTextInput;
+            txtName.PreviewTextInput += txtName_PreviewTextInput;
+            txtPatronomyc.PreviewTextInput += txtPatronomyc_PreviewTextInput;
 
             txtPhoneNumber.LostFocus += txtPhoneNumber_LostFocus;
             txtYear.LostFocus += txtYear_LostFocus;
@@ -66,9 +85,17 @@ namespace UP_Student_Management.Pages.Admin
             try
             {
                 var departmentContext = new DepartmentContext();
-                var departments = departmentContext.AllDepartments();
+                var departments = departmentContext.AllDepartments().ToList(); // Преобразуем в List
 
                 cmbDepartments.Items.Clear();
+
+                if (!departments.Any())
+                {
+                    MessageBox.Show("В базе данных нет отделений. Добавьте отделения перед созданием студентов.",
+                        "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 foreach (var department in departments)
                 {
                     cmbDepartments.Items.Add(department);
@@ -82,59 +109,103 @@ namespace UP_Student_Management.Pages.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки отделений: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка загрузки отделений: {ex.Message}\n" +
+                               "Проверьте подключение к базе данных и наличие таблицы Departments.",
+                               "Ошибка",
+                               MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void btnChooseFile(object sender, RoutedEventArgs e)
+        private void btnChooseFiles_Click(object sender, RoutedEventArgs e)
         {
-            ChooseFile();
+            ChooseFiles();
         }
 
-        private void ChooseFile()
+        private void ChooseFiles()
         {
             try
             {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Все файлы (*.*)|*.*|Документы (*.pdf;*.doc;*.docx)|*.pdf;*.doc;*.docx|Изображения (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png";
-                openFileDialog.FilterIndex = 2;
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    Multiselect = true,
+                    Filter = "Все файлы (*.*)|*.*|" +
+                            "Документы (*.pdf;*.doc;*.docx;*.txt;*.rtf)|*.pdf;*.doc;*.docx;*.txt;*.rtf|" +
+                            "Изображения (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|" +
+                            "Архивы (*.zip;*.rar;*.7z)|*.zip;*.rar;*.7z",
+                    FilterIndex = 2
+                };
 
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    selectedFilePath = openFileDialog.FileName;
-                    MessageBox.Show($"Выбран файл: {Path.GetFileName(selectedFilePath)}", "Файл выбран",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    foreach (string filePath in openFileDialog.FileNames)
+                    {
+                        // Проверяем, не добавлен ли уже этот файл
+                        if (!selectedFiles.Any(f => f.FilePath == filePath))
+                        {
+                            selectedFiles.Add(new SelectedFile
+                            {
+                                FilePath = filePath,
+                                FileName = Path.GetFileName(filePath),
+                                FileExtension = Path.GetExtension(filePath)
+                            });
+                        }
+                    }
+
+                    UpdateFileListDisplay();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка выбора файла: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка выбора файлов: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void btnDeleteFile(object sender, RoutedEventArgs e)
+        private void btnClearFiles_Click(object sender, RoutedEventArgs e)
         {
-            DeleteSelectedFile();
+            ClearAllFiles();
         }
 
-        private void DeleteSelectedFile()
+        private void ClearAllFiles()
         {
-            if (!string.IsNullOrEmpty(selectedFilePath))
+            if (selectedFiles.Count > 0)
             {
-                selectedFilePath = string.Empty;
-                MessageBox.Show("Файл удален из выбора", "Информация",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var result = MessageBox.Show($"Удалить все выбранные файлы ({selectedFiles.Count})?",
+                    "Подтверждение",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    selectedFiles.Clear();
+                    UpdateFileListDisplay();
+                }
             }
             else
             {
-                MessageBox.Show("Файл не выбран", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Файлы не выбраны", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        private void btnAdd(object sender, RoutedEventArgs e)
+        private void btnRemoveFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button button && button.Tag is SelectedFile file)
+            {
+                selectedFiles.Remove(file);
+                UpdateFileListDisplay();
+            }
+        }
+
+        private void UpdateFileListDisplay()
+        {
+            if (selectedFiles.Count == 0)
+            {
+                // Можно добавить текст "Файлы не выбраны" или оставить пустую область
+            }
+        }
+
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             AddStudent();
         }
@@ -145,38 +216,95 @@ namespace UP_Student_Management.Pages.Admin
             {
                 if (!ValidateForm())
                     return;
-
                 StudentContext student = CreateStudentFromForm();
 
+                MessageBox.Show($"DepartmentId для сохранения: {student.DepartmentId}",
+            "Отладка", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // ПРОВЕРКА 1: Получить все отделения из БД
+                var departmentContext = new DepartmentContext();
+                var allDepartments = departmentContext.AllDepartments().ToList();
+
+                // Показать все отделения для отладки
+                string departmentsInfo = "Отделения в базе данных:\n";
+                foreach (var dept in allDepartments)
+                {
+                    departmentsInfo += $"ID: {dept.Id}, Название: {dept.Name}\n";
+                }
+
+                MessageBox.Show(departmentsInfo, "Отладка - Все отделения",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // ПРОВЕРКА 2: Конкретно проверить отделение с Id = 2
+                bool departmentExists = allDepartments.Any(d => d.Id == student.DepartmentId);
+
+                if (!departmentExists)
+                {
+                    MessageBox.Show($"Отделение с ID {student.DepartmentId} не найдено в базе данных!\n" +
+                                  "Доступные ID: " + string.Join(", ", allDepartments.Select(d => d.Id)),
+                                  "Критическая ошибка",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Сохраняем студента в базу
                 student.Save(false);
 
-                if (!string.IsNullOrEmpty(selectedFilePath) && File.Exists(selectedFilePath))
+                // Сохраняем все выбранные файлы
+                if (selectedFiles.Count > 0)
                 {
-                    string destinationPath = CopyStudentFile(student.Id);
-                    if (!string.IsNullOrEmpty(destinationPath))
+                    foreach (var file in selectedFiles)
                     {
-                        student.FilePath = destinationPath;
-                        student.Save(true);
+                        try
+                        {
+                            // Используем упрощенный метод
+                            string savedPath = student.SaveStudentFile(file.FilePath);
+                            if (!string.IsNullOrEmpty(savedPath))
+                            {
+                                // Файл успешно сохранен
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Ошибка при сохранении файла {file.FileName}: {ex.Message}",
+                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
                     }
                 }
 
-                MessageBox.Show($"Студент {student.Surname} {student.Firstname} успешно добавлен!",
-                    "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Студент {student.Surname} {student.Firstname} успешно добавлен!\n" +
+                               $"Прикреплено файлов: {selectedFiles.Count}",
+                               "Успешно",
+                               MessageBoxButton.OK,
+                               MessageBoxImage.Information);
 
                 ClearForm();
 
                 this.DialogResult = true;
                 this.Close();
             }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show($"Ошибка валидации: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при добавлении студента: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+
+                // Для отладки можно вывести внутреннее исключение
+                if (ex.InnerException != null)
+                {
+                    MessageBox.Show($"Внутренняя ошибка: {ex.InnerException.Message}", "Детали ошибки",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
         }
 
         private bool ValidateForm()
         {
+            // Валидация фамилии
             if (string.IsNullOrWhiteSpace(txtSurname.Text))
             {
                 MessageBox.Show("Пожалуйста, заполните фамилию студента", "Внимание",
@@ -185,6 +313,15 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            if (!IsValidName(txtSurname.Text, "фамилии"))
+            {
+                MessageBox.Show("Фамилия должна содержать только русские буквы и начинаться с заглавной буквы", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                txtSurname.Focus();
+                return false;
+            }
+
+            // Валидация имени
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
                 MessageBox.Show("Пожалуйста, заполните имя студента", "Внимание",
@@ -193,6 +330,24 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            if (!IsValidName(txtName.Text, "имени"))
+            {
+                MessageBox.Show("Имя должно содержать только русские буквы и начинаться с заглавной буквы", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                txtName.Focus();
+                return false;
+            }
+
+            // Валидация отчества (необязательное поле)
+            if (!string.IsNullOrWhiteSpace(txtPatronomyc.Text) && !IsValidName(txtPatronomyc.Text, "отчества"))
+            {
+                MessageBox.Show("Отчество должно содержать только русские буквы и начинаться с заглавной буквы", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                txtPatronomyc.Focus();
+                return false;
+            }
+
+            // Валидация даты рождения
             if (dateCapacity.SelectedDate == null)
             {
                 MessageBox.Show("Пожалуйста, выберите дату рождения", "Внимание",
@@ -201,6 +356,7 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            // Валидация отделения
             if (cmbDepartments.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, выберите отделение", "Внимание",
@@ -209,19 +365,12 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            // Валидация года поступления
             if (string.IsNullOrWhiteSpace(txtYear.Text))
             {
                 MessageBox.Show("Пожалуйста, укажите год поступления", "Внимание",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtYear.Focus();
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtYearEnd.Text))
-            {
-                MessageBox.Show("Пожалуйста, укажите год окончания", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                txtYearEnd.Focus();
                 return false;
             }
 
@@ -233,6 +382,15 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            // Валидация года окончания
+            if (string.IsNullOrWhiteSpace(txtYearEnd.Text))
+            {
+                MessageBox.Show("Пожалуйста, укажите год окончания", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtYearEnd.Focus();
+                return false;
+            }
+
             if (!int.TryParse(txtYearEnd.Text, out int yearFinish) || yearFinish < yearReceipts)
             {
                 MessageBox.Show("Год окончания должен быть больше или равен году поступления", "Ошибка",
@@ -241,6 +399,7 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            // Валидация возраста
             int age = DateTime.Now.Year - dateCapacity.SelectedDate.Value.Year;
             if (DateTime.Now.DayOfYear < dateCapacity.SelectedDate.Value.DayOfYear)
                 age--;
@@ -253,14 +412,14 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            // Валидация номера телефона
             string phone = txtPhoneNumber.Text.Trim();
             if (!string.IsNullOrEmpty(phone))
             {
-                string digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
-                if (digitsOnly.Length < 10)
+                if (!IsValidPhoneNumber(phone))
                 {
-                    MessageBox.Show("Номер телефона должен содержать минимум 10 цифр", "Внимание",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Номер телефона должен быть в формате +7 (XXX) XXX-XX-XX или 8XXXXXXXXXX", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     txtPhoneNumber.Focus();
                     return false;
                 }
@@ -269,11 +428,60 @@ namespace UP_Student_Management.Pages.Admin
             return true;
         }
 
+        // Метод для валидации имени, фамилии, отчества
+        private bool IsValidName(string name, string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+
+            // Проверяем, что строка состоит только из русских букв и дефиса
+            // и начинается с заглавной буквы
+            Regex regex = new Regex(@"^[А-ЯЁ][а-яё\-]+$");
+            return regex.IsMatch(name);
+        }
+
+        // Метод для валидации номера телефона
+        private bool IsValidPhoneNumber(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone))
+                return true; // Пустой номер - допустимо
+
+            // Убираем все нецифровые символы
+            string digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
+
+            // Проверяем российские форматы номеров
+            if (digitsOnly.Length == 11)
+            {
+                // Форматы: 7XXXXXXXXXX или 8XXXXXXXXXX
+                return digitsOnly.StartsWith("7") || digitsOnly.StartsWith("8");
+            }
+            else if (digitsOnly.Length == 10)
+            {
+                // Формат: XXXXXXXXXX (без кода страны)
+                return true;
+            }
+
+            return false;
+        }
+
         private StudentContext CreateStudentFromForm()
         {
             int yearReceipts = int.Parse(txtYear.Text);
             int yearFinish = int.Parse(txtYearEnd.Text);
+
+            // ПРОВЕРКА: Убедимся, что отделение выбрано и имеет корректный Id
+            if (cmbDepartments.SelectedItem == null)
+            {
+                throw new ArgumentException("Не выбрано отделение");
+            }
+
             DepartmentContext selectedDepartment = (DepartmentContext)cmbDepartments.SelectedItem;
+
+            // Дополнительная проверка Id
+            if (selectedDepartment.Id <= 0)
+            {
+                throw new ArgumentException("Некорректный ID отделения");
+            }
 
             return new StudentContext
             {
@@ -281,7 +489,7 @@ namespace UP_Student_Management.Pages.Admin
                 Firstname = txtName.Text.Trim(),
                 BirthDate = dateCapacity.SelectedDate.Value,
                 Patronomyc = txtPatronomyc.Text.Trim(),
-                Phone = txtPhoneNumber.Text.Trim(),
+                Phone = FormatPhoneNumber(txtPhoneNumber.Text.Trim()),
                 Sex = cmbGender.SelectedItem?.ToString() ?? "М",
                 Education = cmbEducation.SelectedIndex == 0 ? "9" : "11",
                 GroupName = txtGroup.Text.Trim(),
@@ -291,40 +499,75 @@ namespace UP_Student_Management.Pages.Admin
                 DeductionsInfo = txtExpulsion.Text.Trim(),
                 DataDeductions = dateExpulsion.SelectedDate ?? DateTime.MinValue,
                 Note = txtDescription.Text.Trim(),
-                FilePath = selectedFilePath,
-                DepartmentId = selectedDepartment.Id
+                ParentsInfo = txtParentsInfo.Text.Trim(),
+                Penalties = txtPenalties.Text.Trim(),
+                DepartmentId = selectedDepartment.Id // Теперь здесь гарантированно корректное значение
             };
         }
 
-        private string CopyStudentFile(int studentId)
+        private string FormatPhoneNumber(string phone)
+        {
+            if (string.IsNullOrEmpty(phone))
+                return phone;
+
+            string digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
+
+            if (digitsOnly.Length == 11)
+            {
+                if (digitsOnly.StartsWith("8"))
+                {
+                    digitsOnly = "7" + digitsOnly.Substring(1);
+                }
+                return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4, 3)}-{digitsOnly.Substring(7, 2)}-{digitsOnly.Substring(9, 2)}";
+            }
+            else if (digitsOnly.Length == 10)
+            {
+                return $"+7 ({digitsOnly.Substring(0, 3)}) {digitsOnly.Substring(3, 3)}-{digitsOnly.Substring(6, 2)}-{digitsOnly.Substring(8, 2)}";
+            }
+
+            return phone;
+        }
+
+        private string CopyStudentFile(int studentId, string sourceFilePath)
         {
             try
             {
                 string appDataPath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     "UP_Student_Management",
-                    "StudentFiles"
+                    "StudentFiles",
+                    studentId.ToString()
                 );
 
                 Directory.CreateDirectory(appDataPath);
 
-                string destinationPath = Path.Combine(
-                    appDataPath,
-                    $"{studentId}_{Path.GetFileName(selectedFilePath)}"
-                );
+                string fileName = Path.GetFileName(sourceFilePath);
+                string destinationPath = Path.Combine(appDataPath, fileName);
 
-                File.Copy(selectedFilePath, destinationPath, true);
+                // Если файл уже существует, добавляем временную метку
+                if (File.Exists(destinationPath))
+                {
+                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                    string extension = Path.GetExtension(fileName);
+                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    fileName = $"{fileNameWithoutExt}_{timestamp}{extension}";
+                    destinationPath = Path.Combine(appDataPath, fileName);
+                }
+
+                File.Copy(sourceFilePath, destinationPath, false);
                 return destinationPath;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при копировании файла: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Ошибка при копировании файла {Path.GetFileName(sourceFilePath)}: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return string.Empty;
             }
         }
 
-        private void btnCancel(object sender, RoutedEventArgs e)
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             CancelForm();
         }
@@ -353,7 +596,31 @@ namespace UP_Student_Management.Pages.Admin
             txtExpulsion.Clear();
             dateExpulsion.SelectedDate = null;
             txtDescription.Clear();
-            selectedFilePath = string.Empty;
+            txtParentsInfo.Clear();
+            txtPenalties.Clear();
+            selectedFiles.Clear();
+        }
+
+        // Обработчики событий для валидации ввода
+        private void txtSurname_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Разрешаем только русские буквы и дефис
+            Regex regex = new Regex(@"^[а-яА-ЯёЁ\-]$");
+            e.Handled = !regex.IsMatch(e.Text);
+        }
+
+        private void txtName_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Разрешаем только русские буквы и дефис
+            Regex regex = new Regex(@"^[а-яА-ЯёЁ\-]$");
+            e.Handled = !regex.IsMatch(e.Text);
+        }
+
+        private void txtPatronomyc_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Разрешаем только русские буквы и дефис
+            Regex regex = new Regex(@"^[а-яА-ЯёЁ\-]$");
+            e.Handled = !regex.IsMatch(e.Text);
         }
 
         private void txtYear_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -368,7 +635,9 @@ namespace UP_Student_Management.Pages.Admin
 
         private void txtPhoneNumber_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !(char.IsDigit(e.Text, 0) || e.Text == "+" || e.Text == "(" || e.Text == ")" || e.Text == "-");
+            // Разрешаем цифры, плюс, скобки, дефис и пробел
+            Regex regex = new Regex(@"^[\d\+\-\(\)\s]$");
+            e.Handled = !regex.IsMatch(e.Text);
         }
 
         private void txtPhoneNumber_LostFocus(object sender, RoutedEventArgs e)
@@ -376,16 +645,7 @@ namespace UP_Student_Management.Pages.Admin
             string phone = txtPhoneNumber.Text.Trim();
             if (!string.IsNullOrEmpty(phone))
             {
-                string digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
-
-                if (digitsOnly.Length == 11 && (digitsOnly.StartsWith("7") || digitsOnly.StartsWith("8")))
-                {
-                    txtPhoneNumber.Text = $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4, 3)}-{digitsOnly.Substring(7, 2)}-{digitsOnly.Substring(9, 2)}";
-                }
-                else if (digitsOnly.Length == 10)
-                {
-                    txtPhoneNumber.Text = $"+7 ({digitsOnly.Substring(0, 3)}) {digitsOnly.Substring(3, 3)}-{digitsOnly.Substring(6, 2)}-{digitsOnly.Substring(8, 2)}";
-                }
+                txtPhoneNumber.Text = FormatPhoneNumber(phone);
             }
         }
 

@@ -49,7 +49,6 @@ namespace UP_Student_Management.Pages.Admin
                     Capacity = capacity
                 };
                 newRoom.Save(false);
-                //TODO: Добавить обновление списка комнат
                 Close();
             } 
             catch (Exception ex) 

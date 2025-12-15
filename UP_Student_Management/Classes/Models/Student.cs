@@ -26,5 +26,7 @@ namespace UP_Student_Management.Classes.Models
         public string FilePath { get; set; }
         public int DepartmentId { get; set; }
         public int? RoomId { get; set; }
+        public string ParentsInfo { get; set; }
+        public string Penalties { get; set; }
     }
 }

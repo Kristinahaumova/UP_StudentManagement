@@ -8,5 +8,6 @@ namespace UP_Student_Management.Classes.Interfaces
         void Save(bool Update = false);
         List<DepartmentContext> AllDepartments();
         void Delete();
+        DepartmentContext GetById(int id);
     }
 }
