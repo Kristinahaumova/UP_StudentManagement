@@ -13,7 +13,6 @@ using UP_Student_Management.Classes.Context;
 
 namespace UP_Student_Management.Pages.Admin
 {
-    // Класс для хранения информации о файлах
     public class StudentFileItem
     {
         public int Id { get; set; }
@@ -23,13 +22,9 @@ namespace UP_Student_Management.Pages.Admin
         public bool IsExistingFile { get; set; }
     }
 
-    // Класс для работы с файлами студентов
     public class StudentFileContext
     {
-        // Используйте правильную строку подключения
-        private string connectionString = "Server=localhost;Database=studentmanagement;Uid=root;Pwd=;Charset=utf8mb4;";
-
-        // Получить файлы студента по ID
+        private string connectionString = "server=localhost;port=3307;database=StudentManagement;user=root;";
         public List<StudentFileItem> GetFilesByStudentId(int studentId)
         {
             List<StudentFileItem> files = new List<StudentFileItem>();
@@ -39,8 +34,6 @@ namespace UP_Student_Management.Pages.Admin
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-
-                    // Берем просто пути из таблицы StudentFiles
                     string query = "SELECT FilePath FROM StudentFiles WHERE IdStudent = @StudentId";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -70,8 +63,7 @@ namespace UP_Student_Management.Pages.Admin
             }
             catch (Exception ex)
             {
-                // Тихая обработка ошибки - просто логируем
-                Console.WriteLine($"Ошибка при загрузке файлов для студента {studentId}: {ex.Message}");
+                MessageBox.Show($"Ошибка при загрузке файлов для студента {studentId}: {ex.Message}");
             }
 
             return files;
@@ -157,13 +149,10 @@ namespace UP_Student_Management.Pages.Admin
             this.student = student;
             LoadComboBoxData();
             LoadStudentData();
-
-            // Загружаем файлы из БД
             LoadStudentFiles();
 
             AttachEventHandlers();
 
-            // Привязываем коллекцию файлов
             lstFiles.ItemsSource = studentFiles;
         }
 
@@ -416,13 +405,13 @@ namespace UP_Student_Management.Pages.Admin
                 // Для отладки
                 if (existingFiles.Count > 0)
                 {
-                    Console.WriteLine($"Загружено {existingFiles.Count} файлов для студента ID: {student.Id}");
+                    MessageBox.Show($"Загружено {existingFiles.Count} файлов для студента ID: {student.Id}");
                 }
             }
             catch (Exception ex)
             {
                 // Если не удалось загрузить файлы, просто продолжаем
-                Console.WriteLine($"Не удалось загрузить файлы из БД: {ex.Message}");
+                MessageBox.Show($"Не удалось загрузить файлы из БД: {ex.Message}");
             }
         }
 
@@ -658,8 +647,6 @@ namespace UP_Student_Management.Pages.Admin
             {
                 try
                 {
-                    // Просто сохраняем путь к файлу в БД
-                    // НЕ КОПИРУЕМ файл - сохраняем только путь
                     if (studentFileContext.AddFile(student.Id, file.FilePath))
                     {
                         Console.WriteLine($"Путь к файлу сохранен в БД: {file.FilePath}");

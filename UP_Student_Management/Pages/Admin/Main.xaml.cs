@@ -321,6 +321,7 @@ namespace UP_Student_Management.Pages.Admin
                         worksheet.Cells[row, 4] = status.EndDate?.ToString("dd.MM.yyyy") ?? "";
                         row++;
                     }
+                    worksheet.Columns.AutoFit();
                     string desctopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                     string filePath = System.IO.Path.Combine(desctopPath, "Отчет по студенту " + selectedStudent.Surname + ".xlsx");
                     workbook.SaveAs(filePath);

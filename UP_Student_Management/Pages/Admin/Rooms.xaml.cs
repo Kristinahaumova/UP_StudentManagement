@@ -154,13 +154,23 @@ namespace UP_Student_Management.Pages.Admin
                 excelApp.Visible = true;
                 var workbook = excelApp.Workbooks.Add();
                 var worksheet = workbook.Sheets[1];
+                worksheet.Columns.AutoFit();
+                // Заголовки отчета
+                worksheet.Cells[1, 1] = "Пермский авиационный техникум им. А.Д. Швецова";
+                worksheet.Cells[2, 1] = "База данных по воспитательной работе";
+                worksheet.Cells[3, 1] = "Проживающие в общежитии";
+                worksheet.Cells[6, 1] = $"на дату: {DateTime.Now:dd.MM.yyyy}";
 
-                worksheet.Cells[1, 1] = "Комната";
-                worksheet.Cells[1, 2] = "Студент";
-                worksheet.Cells[1, 3] = "Группа";
-                worksheet.Cells[1, 4] = "Дата заселения";
-                worksheet.Cells[1, 5] = "Дата выселения";
-                worksheet.Cells[1, 6] = "Примечание";
+                // Заголовки таблицы
+                worksheet.Cells[8, 1] = "Комната";
+                worksheet.Cells[8, 2] = "ФИО";
+                worksheet.Cells[8, 3] = "Дата рождения";
+                worksheet.Cells[8, 4] = "Группа";
+                worksheet.Cells[8, 5] = "Контактный номер";
+                worksheet.Cells[8, 6] = "Контакты родителей";
+                worksheet.Cells[8, 7] = "Дата первого заселения";
+                worksheet.Cells[8, 8] = "Общежитие (примечание)";
+                worksheet.Cells[8, 9] = "Отчисление";
 
                 var hostelContext = new HostelContext();
                 var allHostel = hostelContext.AllHostel();
@@ -171,21 +181,35 @@ namespace UP_Student_Management.Pages.Admin
                 var roomContext = new RoomContext();
                 var allRooms = roomContext.AllRooms();
 
-                int row = 2;
+                int row = 9;
+                int count = 0;
                 foreach (var hostel in allHostel)
                 {
                     var student = allStudents.FirstOrDefault(s => s.Id == hostel.StudentId);
                     var room = allRooms.FirstOrDefault(r => r.Id == hostel.RoomId);
 
-                    worksheet.Cells[row, 1] = room?.Name ?? "Неизвестно";
-                    worksheet.Cells[row, 2] = student != null ? $"{student.Surname} {student.Firstname} {student.Patronomyc}" : "Неизвестно";
-                    worksheet.Cells[row, 3] = student?.GroupName ?? "Неизвестно";
-                    worksheet.Cells[row, 4] = hostel.StartDate.ToString("dd.MM.yyyy");
-                    worksheet.Cells[row, 5] = hostel.EndDate?.ToString("dd.MM.yyyy") ?? "";
-                    worksheet.Cells[row, 6] = hostel.Note ?? "";
+                    if (student != null)
+                    {
+                        worksheet.Cells[row, 1] = room?.Name ?? "Неизвестно";
+                        worksheet.Cells[row, 2] = $"{student.Surname} {student.Firstname} {student.Patronomyc}";
+                        worksheet.Cells[row, 3] = student.BirthDate.ToString("dd.MM.yyyy");
+                        worksheet.Cells[row, 4] = student.GroupName ?? "Неизвестно";
+                        worksheet.Cells[row, 5] = student.Phone ?? "Неизвестно";
+                        worksheet.Cells[row, 6] = "Неизвестно"; // Контакты родителей
+                        worksheet.Cells[row, 7] = hostel.StartDate.ToString("dd.MM.yyyy");
+                        worksheet.Cells[row, 8] = hostel.Note ?? "Неизвестно";
+                        worksheet.Cells[row, 9] = "Неизвестно"; // Отчисление
 
-                    row++;
+                        row++;
+                        count++;
+                    }
                 }
+
+                // Итоги
+                worksheet.Cells[row + 1, 1] = $"Количество записей: {count}";
+                worksheet.Cells[row + 2, 1] = $"Дата печати: {DateTime.Now:dd.MM.yyyy}";
+
+                worksheet.Columns.AutoFit();
 
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 string filePath = System.IO.Path.Combine(desktopPath, "Отчет о студентах проживающих в общежитии.xlsx");
