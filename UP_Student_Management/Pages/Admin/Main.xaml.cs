@@ -38,6 +38,8 @@ namespace UP_Student_Management.Pages.Admin
             UpdateListRequested += UpdateStudentsList;
             updateList();
             LoadCombobox();
+            lstStatusFilter.SelectionChanged += (s, e) => FilterStudents();
+
 
             if (!MainWindow.IsAdmin) 
             {
@@ -125,16 +127,17 @@ namespace UP_Student_Management.Pages.Admin
                                         student.Patronomyc.ToLower().Contains(searchQuery);
 
                     bool matchesDepartment = true;
-                    bool matchesStatus = true;
                     if (cmbDepartmentFilter.SelectedItem != null && cmbDepartmentFilter.SelectedIndex > 0)
                     {
                         var selectedDepartment = (DepartmentContext)cmbDepartmentFilter.SelectedItem;
                         matchesDepartment = student.DepartmentId == selectedDepartment.Id;
                     }
-                    if (cmbStatusFilter.SelectedItem != null && cmbStatusFilter.SelectedIndex > 0)
+
+                    bool matchesStatus = true;
+                    if (lstStatusFilter.SelectedItems.Count > 0)
                     {
-                        string selectedStatus = cmbStatusFilter.SelectedItem.ToString();
-                        matchesStatus = student.Status == selectedStatus;
+                        var selectedStatuses = lstStatusFilter.SelectedItems.Cast<string>().ToList();
+                        matchesStatus = selectedStatuses.Contains(student.Status);
                     }
 
                     return matchesSearch && matchesDepartment && matchesStatus;
@@ -142,6 +145,7 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             };
         }
+
         private void LoadCombobox() 
         {
             LoadDepartments();
@@ -175,18 +179,17 @@ namespace UP_Student_Management.Pages.Admin
         }
         private void LoadStatuses()
         {
-            cmbStatusFilter.Items.Clear();
-            cmbStatusFilter.Items.Add("Все");
-            cmbStatusFilter.Items.Add("Сирота");
-            cmbStatusFilter.Items.Add("Инвалид");
-            cmbStatusFilter.Items.Add("Общежитие");
-            cmbStatusFilter.Items.Add("ОВЗ");
-            cmbStatusFilter.Items.Add("Группа риска");
-            cmbStatusFilter.Items.Add("Стипендия");
-            cmbStatusFilter.Items.Add("СППП");
-            cmbStatusFilter.Items.Add("СВО");
-            cmbStatusFilter.SelectedIndex = 0;
+            lstStatusFilter.Items.Clear();
+            lstStatusFilter.Items.Add("Сирота");
+            lstStatusFilter.Items.Add("Инвалид");
+            lstStatusFilter.Items.Add("Общежитие");
+            lstStatusFilter.Items.Add("ОВЗ");
+            lstStatusFilter.Items.Add("Группа риска");
+            lstStatusFilter.Items.Add("Стипендия");
+            lstStatusFilter.Items.Add("СППП");
+            lstStatusFilter.Items.Add("СВО");
         }
+
         private void Exit(object sender, RoutedEventArgs e)
         {
             MainWindow.init.OpenPage(new Pages.Login());
