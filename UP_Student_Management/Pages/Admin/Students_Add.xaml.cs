@@ -218,9 +218,6 @@ namespace UP_Student_Management.Pages.Admin
                     return;
                 StudentContext student = CreateStudentFromForm();
 
-                MessageBox.Show($"DepartmentId для сохранения: {student.DepartmentId}",
-            "Отладка", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 // ПРОВЕРКА 1: Получить все отделения из БД
                 var departmentContext = new DepartmentContext();
                 var allDepartments = departmentContext.AllDepartments().ToList();
@@ -232,18 +229,11 @@ namespace UP_Student_Management.Pages.Admin
                     departmentsInfo += $"ID: {dept.Id}, Название: {dept.Name}\n";
                 }
 
-                MessageBox.Show(departmentsInfo, "Отладка - Все отделения",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-
                 // ПРОВЕРКА 2: Конкретно проверить отделение с Id = 2
                 bool departmentExists = allDepartments.Any(d => d.Id == student.DepartmentId);
 
                 if (!departmentExists)
                 {
-                    MessageBox.Show($"Отделение с ID {student.DepartmentId} не найдено в базе данных!\n" +
-                                  "Доступные ID: " + string.Join(", ", allDepartments.Select(d => d.Id)),
-                                  "Критическая ошибка",
-                                  MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 

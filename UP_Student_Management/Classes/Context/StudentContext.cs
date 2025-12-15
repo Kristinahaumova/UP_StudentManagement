@@ -269,10 +269,19 @@ namespace UP_Student_Management.Classes.Context
         {
             MySqlConnection connection = Connection.OpenConnection();
 
+            // Проверяем, что соединение не null
+            if (connection == null)
+            {
+                throw new Exception("Не удалось установить соединение с базой данных");
+            }
+
             try
             {
-                // Удаляем файлы студента
-                DeleteStudentFilesFromDatabase();
+                // Дополнительная проверка состояния соединения
+                if (connection.State != System.Data.ConnectionState.Open)
+                {
+                    connection.Open();
+                }
 
                 string query = "DELETE FROM `Students` WHERE Id = @id";
                 MySqlCommand command = new MySqlCommand(query, connection);
@@ -286,7 +295,12 @@ namespace UP_Student_Management.Classes.Context
             }
             finally
             {
-                connection.Close();
+                // Всегда закрываем соединение
+                if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                {
+                    connection.Close();
+                    MySqlConnection.ClearPool(connection); // Очищаем пул
+                }
             }
         }
 
