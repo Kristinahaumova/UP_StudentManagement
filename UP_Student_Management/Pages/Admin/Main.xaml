@@ -51,8 +51,12 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBox x:Name="txtSearch" materialDesign:HintAssist.Hint="Поиск" Margin="10" Width="250" Style="{StaticResource MaterialDesignTextBox}" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
                     <ComboBox x:Name="cmbDepartmentFilter" SelectionChanged="cmbDepartmentFilter_SelectionChanged" materialDesign:HintAssist.Hint="Отделение" Margin="10" Width="150" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
-					<ListBox x:Name="lstStatusFilter" SelectionMode="Multiple" materialDesign:HintAssist.Hint="Статус" Margin="10" Width="140" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
-				</StackPanel>
+                    <ComboBox x:Name="cmbSexFilter" SelectionChanged="cmbSexFilter_SelectionChanged" materialDesign:HintAssist.Hint="Пол" Margin="10" Width="80" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+                    <ComboBox x:Name="cmbBudgetFilter" SelectionChanged="cmbBudgetFilter_SelectionChanged" materialDesign:HintAssist.Hint="Бюджетность" Margin="10" Width="100" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+                    <ComboBox x:Name="cmbEducationFilter" SelectionChanged="cmbEducationFilter_SelectionChanged" materialDesign:HintAssist.Hint="Образование" Margin="10" Width="100" materialDesign:TextFieldAssist.UnderlineBrush="#0066CC"/>
+
+                    <StackPanel x:Name="statusFilterPanel" Orientation="Horizontal" Margin="10"/>
+                </StackPanel>
             </GroupBox>
             <GroupBox Grid.Row="1" x:Name="gbWhatDo" Header="Что сделать?" FontWeight="Bold" materialDesign:ColorZoneAssist.Mode="Standard" Style="{StaticResource MaterialDesignCardGroupBox}" Margin="10,10,10,10">
                 <StackPanel Orientation="Horizontal">

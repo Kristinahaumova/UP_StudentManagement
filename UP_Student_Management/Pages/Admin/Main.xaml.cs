@@ -38,7 +38,8 @@ namespace UP_Student_Management.Pages.Admin
             UpdateListRequested += UpdateStudentsList;
             updateList();
             LoadCombobox();
-            lstStatusFilter.SelectionChanged += (s, e) => FilterStudents();
+            LoadFilters();
+            
 
 
             if (!MainWindow.IsAdmin) 
@@ -85,7 +86,7 @@ namespace UP_Student_Management.Pages.Admin
                             BirthDate = student.BirthDate,
                             Sex = student.Sex,
                             Education = student.Education,
-                            Status = GetStudentStatus(student.Id, sirotaContext, invalidContext, hostelContext, ovzContext, riskGroupContext, scholarshipContext, spppContext, svoContext)
+                            Statuses = GetStudentStatuses(student.Id, sirotaContext, invalidContext, hostelContext, ovzContext, riskGroupContext, scholarshipContext, spppContext, svoContext)
                         })
                     .ToList();
 
@@ -100,20 +101,24 @@ namespace UP_Student_Management.Pages.Admin
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
             }
         }
-        private string GetStudentStatus(int studentId, SirotaContext sirotaContext, InvalidContext invalidContext, 
-            HostelContext hostelContext, OvzContext ovzContext, RiskGroupContext riskGroupContext, 
-            ScholarshipContext scholarshipContext, SPPPContext spppContext, SVOContext svoContext) 
+        private List<string> GetStudentStatuses(int studentId, SirotaContext sirotaContext, InvalidContext invalidContext,
+            HostelContext hostelContext, OvzContext ovzContext, RiskGroupContext riskGroupContext,
+            ScholarshipContext scholarshipContext, SPPPContext spppContext, SVOContext svoContext)
         {
-            if (sirotaContext.AllSirota().Any(s => s.StudentId == studentId)) return "Сирота";
-            if (invalidContext.AllInvalid().Any(i => i.StudentId == studentId)) return "Инвалид";
-            if (hostelContext.AllHostel().Any(i => i.StudentId == studentId)) return "Общежитие";
-            if (ovzContext.AllOvz().Any(i => i.StudentId == studentId)) return "ОВЗ";
-            if (riskGroupContext.AllRiskGroup().Any(i => i.StudentId == studentId)) return "Группа риска";
-            if (scholarshipContext.AllScholarship().Any(i => i.StudentId == studentId)) return "Стипендия";
-            if (spppContext.AllSPPP().Any(i => i.StudentId == studentId)) return "СППП";
-            if (svoContext.AllSVO().Any(i => i.StudentId == studentId)) return "СВО";
-            return "Без статуса";
+            var statuses = new List<string>();
+
+            if (sirotaContext.AllSirota().Any(s => s.StudentId == studentId)) statuses.Add("Сирота");
+            if (invalidContext.AllInvalid().Any(i => i.StudentId == studentId)) statuses.Add("Инвалид");
+            if (hostelContext.AllHostel().Any(i => i.StudentId == studentId)) statuses.Add("Общежитие");
+            if (ovzContext.AllOvz().Any(i => i.StudentId == studentId)) statuses.Add("ОВЗ");
+            if (riskGroupContext.AllRiskGroup().Any(i => i.StudentId == studentId)) statuses.Add("Группа риска");
+            if (scholarshipContext.AllScholarship().Any(i => i.StudentId == studentId)) statuses.Add("Стипендия");
+            if (spppContext.AllSPPP().Any(i => i.StudentId == studentId)) statuses.Add("СППП");
+            if (svoContext.AllSVO().Any(i => i.StudentId == studentId)) statuses.Add("СВО");
+
+            return statuses;
         }
+
         private void FilterStudents()
         {
             studentsView.Filter = item =>
@@ -134,17 +139,40 @@ namespace UP_Student_Management.Pages.Admin
                     }
 
                     bool matchesStatus = true;
-                    if (lstStatusFilter.SelectedItems.Count > 0)
+                    var selectedStatuses = statusFilterPanel.Children.OfType<CheckBox>().Where(c => c.IsChecked == true).Select(c => c.Content.ToString()).ToList();
+                    if (selectedStatuses.Count > 0)
                     {
-                        var selectedStatuses = lstStatusFilter.SelectedItems.Cast<string>().ToList();
-                        matchesStatus = selectedStatuses.Contains(student.Status);
+                        matchesStatus = selectedStatuses.All(status => student.Statuses.Contains(status));
                     }
 
-                    return matchesSearch && matchesDepartment && matchesStatus;
+                    bool matchesSex = true;
+                    if (cmbSexFilter.SelectedItem != null && cmbSexFilter.SelectedIndex > 0)
+                    {
+                        string selectedSex = cmbSexFilter.SelectedItem.ToString();
+                        matchesSex = student.Sex == selectedSex;
+                    }
+
+                    bool matchesBudget = true;
+                    if (cmbBudgetFilter.SelectedItem != null && cmbBudgetFilter.SelectedIndex > 0)
+                    {
+                        string selectedBudget = cmbBudgetFilter.SelectedItem.ToString();
+                        matchesBudget = (selectedBudget == "Бюджет" && student.isBudget == 1) ||
+                                         (selectedBudget == "Контракт" && student.isBudget == 0);
+                    }
+
+                    bool matchesEducation = true;
+                    if (cmbEducationFilter.SelectedItem != null && cmbEducationFilter.SelectedIndex > 0)
+                    {
+                        string selectedEducation = cmbEducationFilter.SelectedItem.ToString();
+                        matchesEducation = student.Education == selectedEducation;
+                    }
+
+                    return matchesSearch && matchesDepartment && matchesStatus && matchesSex && matchesBudget && matchesEducation;
                 }
                 return false;
             };
         }
+
 
         private void LoadCombobox() 
         {
@@ -179,16 +207,35 @@ namespace UP_Student_Management.Pages.Admin
         }
         private void LoadStatuses()
         {
-            lstStatusFilter.Items.Clear();
-            lstStatusFilter.Items.Add("Сирота");
-            lstStatusFilter.Items.Add("Инвалид");
-            lstStatusFilter.Items.Add("Общежитие");
-            lstStatusFilter.Items.Add("ОВЗ");
-            lstStatusFilter.Items.Add("Группа риска");
-            lstStatusFilter.Items.Add("Стипендия");
-            lstStatusFilter.Items.Add("СППП");
-            lstStatusFilter.Items.Add("СВО");
+            statusFilterPanel.Children.Clear();
+            string[] statuses = { "Сирота", "Инвалид", "Общежитие", "ОВЗ", "Группа риска", "Стипендия", "СППП", "СВО" };
+            foreach (string status in statuses)
+            {
+                CheckBox checkBox = new CheckBox { Content = status, Margin = new Thickness(5, 0, 5, 0) };
+                checkBox.Checked += (s, e) => FilterStudents();
+                checkBox.Unchecked += (s, e) => FilterStudents();
+                statusFilterPanel.Children.Add(checkBox);
+            }
         }
+
+        private void LoadFilters()
+        {
+            cmbSexFilter.Items.Add("Все");
+            cmbSexFilter.Items.Add("М");
+            cmbSexFilter.Items.Add("Ж");
+            cmbSexFilter.SelectedIndex = 0;
+
+            cmbBudgetFilter.Items.Add("Все");
+            cmbBudgetFilter.Items.Add("Бюджет");
+            cmbBudgetFilter.Items.Add("Контракт");
+            cmbBudgetFilter.SelectedIndex = 0;
+
+            cmbEducationFilter.Items.Add("Все");
+            cmbEducationFilter.Items.Add("11");
+            cmbEducationFilter.Items.Add("9");
+            cmbEducationFilter.SelectedIndex = 0;
+        }
+
 
         private void Exit(object sender, RoutedEventArgs e)
         {
@@ -427,5 +474,20 @@ namespace UP_Student_Management.Pages.Admin
         {
             FilterStudents();
         }
+        private void cmbSexFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterStudents();
+        }
+
+        private void cmbBudgetFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterStudents();
+        }
+
+        private void cmbEducationFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterStudents();
+        }
+
     }
 }
