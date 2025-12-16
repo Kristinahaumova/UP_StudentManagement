@@ -109,6 +109,10 @@
                         Header="Год окончания" 
                         Width="110"
                         Binding="{Binding YearFinish}"/>
+                    <DataGridTextColumn 
+                        Header="Статусы" 
+                        Width="150"
+                        Binding="{Binding StatusesString}"/>
                 </DataGrid.Columns>
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
