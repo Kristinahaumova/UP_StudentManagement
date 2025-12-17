@@ -21,7 +21,6 @@ namespace UP_Student_Management.Classes.Context
         public List<StudentFileService> GetFilesByStudentId(int studentId)
         {
             List<StudentFileService> files = new List<StudentFileService>();
-            MySqlConnection connection = Connection.OpenConnection();
 
             string query = @"
                 SELECT Id, FilePath, IdStudent, CreatedDate
@@ -29,33 +28,35 @@ namespace UP_Student_Management.Classes.Context
                 WHERE IdStudent = @studentId
                 ORDER BY CreatedDate DESC";
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@studentId", studentId);
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
+                try
                 {
-                    files.Add(new StudentFileService
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        Id = data.GetInt32("Id"),
-                        FilePath = data.GetString("FilePath"),
-                        StudentId = data.GetInt32("IdStudent"),
-                        CreatedDate = data.GetDateTime("CreatedDate")
-                    });
-                }
+                        command.Parameters.AddWithValue("@studentId", studentId);
 
-                data.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения файлов студента: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                files.Add(new StudentFileService
+                                {
+                                    Id = data.GetInt32("Id"),
+                                    FilePath = data.GetString("FilePath"),
+                                    StudentId = data.GetInt32("IdStudent"),
+                                    CreatedDate = data.GetDateTime("CreatedDate")
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения файлов студента: {ex.Message}");
+                }
             }
 
             return files;
@@ -64,75 +65,75 @@ namespace UP_Student_Management.Classes.Context
         // Добавить файл студента
         public void AddFile()
         {
-            MySqlConnection connection = Connection.OpenConnection();
-
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                string query = @"
-                    INSERT INTO StudentFiles (FilePath, IdStudent)
-                    VALUES (@filePath, @studentId)";
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@filePath", this.FilePath);
-                command.Parameters.AddWithValue("@studentId", this.StudentId);
+                try
+                {
+                    string query = @"
+                        INSERT INTO StudentFiles (FilePath, IdStudent)
+                        VALUES (@filePath, @studentId)";
 
-                command.ExecuteNonQuery();
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@filePath", this.FilePath);
+                        command.Parameters.AddWithValue("@studentId", this.StudentId);
 
-                this.Id = (int)command.LastInsertedId;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка добавления файла: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                        command.ExecuteNonQuery();
+                        this.Id = (int)command.LastInsertedId;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка добавления файла: {ex.Message}");
+                }
             }
         }
 
         // Удалить файл студента
         public void DeleteFile()
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-            try
-            {
-                string query = "DELETE FROM StudentFiles WHERE Id = @id";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id", this.Id);
-
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка удаления файла: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                try
+                {
+                    string query = "DELETE FROM StudentFiles WHERE Id = @id";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", this.Id);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка удаления файла: {ex.Message}");
+                }
             }
         }
 
         // Удалить все файлы студента
         public void DeleteAllFilesByStudentId(int studentId)
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-            try
-            {
-                string query = "DELETE FROM StudentFiles WHERE IdStudent = @studentId";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@studentId", studentId);
-
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка удаления файлов студента: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                try
+                {
+                    string query = "DELETE FROM StudentFiles WHERE IdStudent = @studentId";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@studentId", studentId);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка удаления файлов студента: {ex.Message}");
+                }
             }
         }
     }
@@ -171,7 +172,6 @@ namespace UP_Student_Management.Classes.Context
         public List<StudentContext> AllStudents()
         {
             List<StudentContext> allStudents = new List<StudentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
 
             string query = @"
                 SELECT 
@@ -183,123 +183,111 @@ namespace UP_Student_Management.Classes.Context
                 FROM `Students`
                 ORDER BY Surname, Firstname";
 
-            MySqlDataReader data = Connection.Query(query, connection);
-
-            while (data.Read())
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                StudentContext student = MapDataReaderToStudent(data);
-                allStudents.Add(student);
-            }
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-            data.Close();
-            connection.Close();
+                using (MySqlDataReader data = Connection.Query(query, connection))
+                {
+                    while (data.Read())
+                    {
+                        StudentContext student = MapDataReaderToStudent(data);
+                        allStudents.Add(student);
+                    }
+                }
+            }
             return allStudents;
         }
 
         public void Save(bool Update = false)
         {
-            MySqlConnection connection = Connection.OpenConnection();
-
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                if (Update)
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
                 {
-                    string query = @"
-                        UPDATE `Students` 
-                        SET 
-                            Firstname = @firstname,
-                            Surname = @surname,
-                            BirthDate = @birthdate,
-                            Patronomyc = @patronomyc,
-                            Sex = @sex,
-                            Phone = @phone,
-                            Education = @education,
-                            GroupName = @groupName,
-                            isBudget = @isBudget,
-                            YearReceipts = @yearReceipts,
-                            YearFinish = @yearFinish,
-                            DeductionsInfo = @deductionsInfo,
-                            DataDeductions = @dataDeductions,
-                            Note = @note,
-                            ParentsInfo = @parentsInfo,
-                            Penalties = @penalties,
-                            DepartmentId = @departmentId
-                        WHERE Id = @id";
+                    if (Update)
+                    {
+                        string query = @"
+                            UPDATE `Students` 
+                            SET 
+                                Firstname = @firstname,
+                                Surname = @surname,
+                                BirthDate = @birthdate,
+                                Patronomyc = @patronomyc,
+                                Sex = @sex,
+                                Phone = @phone,
+                                Education = @education,
+                                GroupName = @groupName,
+                                isBudget = @isBudget,
+                                YearReceipts = @yearReceipts,
+                                YearFinish = @yearFinish,
+                                DeductionsInfo = @deductionsInfo,
+                                DataDeductions = @dataDeductions,
+                                Note = @note,
+                                ParentsInfo = @parentsInfo,
+                                Penalties = @penalties,
+                                DepartmentId = @departmentId
+                            WHERE Id = @id";
 
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    AddParameters(command);
-                    command.Parameters.AddWithValue("@id", this.Id);
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            AddParameters(command);
+                            command.Parameters.AddWithValue("@id", this.Id);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        string query = @"
+                            INSERT INTO `Students` 
+                            (Firstname, Surname, BirthDate, Patronomyc, Sex, Phone, 
+                             Education, GroupName, isBudget, YearReceipts, YearFinish,
+                             DeductionsInfo, DataDeductions, Note, ParentsInfo, Penalties,
+                             DepartmentId) 
+                            VALUES 
+                            (@firstname, @surname, @birthdate, @patronomyc, @sex, @phone,
+                             @education, @groupName, @isBudget, @yearReceipts, @yearFinish,
+                             @deductionsInfo, @dataDeductions, @note, @parentsInfo, @penalties,
+                             @departmentId)";
 
-
-                    command.ExecuteNonQuery();
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            AddParameters(command);
+                            command.ExecuteNonQuery();
+                            this.Id = (int)command.LastInsertedId;
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    string query = @"
-                        INSERT INTO `Students` 
-                        (Firstname, Surname, BirthDate, Patronomyc, Sex, Phone, 
-                         Education, GroupName, isBudget, YearReceipts, YearFinish,
-                         DeductionsInfo, DataDeductions, Note, ParentsInfo, Penalties,
-                         DepartmentId) 
-                        VALUES 
-                        (@firstname, @surname, @birthdate, @patronomyc, @sex, @phone,
-                         @education, @groupName, @isBudget, @yearReceipts, @yearFinish,
-                         @deductionsInfo, @dataDeductions, @note, @parentsInfo, @penalties,
-                         @departmentId)";
-
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    AddParameters(command);
-
-                    command.ExecuteNonQuery();
-
-                    this.Id = (int)command.LastInsertedId;
+                    throw new Exception($"Ошибка сохранения студента: {ex.Message}");
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка сохранения студента: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
         public void Delete()
         {
-            MySqlConnection connection = Connection.OpenConnection();
-
-            // Проверяем, что соединение не null
-            if (connection == null)
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                throw new Exception("Не удалось установить соединение с базой данных");
-            }
-
-            try
-            {
-                // Дополнительная проверка состояния соединения
-                if (connection.State != System.Data.ConnectionState.Open)
+                if (connection == null)
                 {
-                    connection.Open();
+                    throw new Exception("Не удалось установить соединение с базой данных");
                 }
 
-                string query = "DELETE FROM `Students` WHERE Id = @id";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id", this.Id);
-
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка удаления студента: {ex.Message}");
-            }
-            finally
-            {
-                // Всегда закрываем соединение
-                if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                try
                 {
-                    connection.Close();
-                    MySqlConnection.ClearPool(connection); // Очищаем пул
+                    string query = "DELETE FROM `Students` WHERE Id = @id";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", this.Id);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка удаления студента: {ex.Message}");
                 }
             }
         }
@@ -308,14 +296,12 @@ namespace UP_Student_Management.Classes.Context
 
         #region Методы для работы с файлами
 
-        // Получить все файлы студента
         public List<StudentFileService> GetStudentFiles()
         {
             var fileService = new StudentFileService();
             return fileService.GetFilesByStudentId(this.Id);
         }
 
-        // Добавить файл студента
         public void AddStudentFile(string filePath)
         {
             var studentFile = new StudentFileService
@@ -323,41 +309,32 @@ namespace UP_Student_Management.Classes.Context
                 FilePath = filePath,
                 StudentId = this.Id
             };
-
             studentFile.AddFile();
         }
 
-        // Удалить конкретный файл студента
         public void DeleteStudentFile(int fileId)
         {
             var studentFile = new StudentFileService { Id = fileId };
             studentFile.DeleteFile();
         }
 
-        // Удалить все файлы студента из базы данных
         public void DeleteStudentFilesFromDatabase()
         {
             var fileService = new StudentFileService();
             fileService.DeleteAllFilesByStudentId(this.Id);
-
-            // Также удаляем физические файлы
             DeleteStudentPhysicalFiles();
         }
 
-        // Сохранить файл студента (копирует файл и сохраняет в БД)
         public string SaveStudentFile(string sourceFilePath)
         {
             try
             {
-                // Создаем папку для студента
                 string studentFolder = GetStudentFolderPath();
                 Directory.CreateDirectory(studentFolder);
 
-                // Генерируем уникальное имя файла
                 string fileName = Path.GetFileName(sourceFilePath);
                 string destinationPath = Path.Combine(studentFolder, fileName);
 
-                // Если файл уже существует, добавляем временную метку
                 if (File.Exists(destinationPath))
                 {
                     string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
@@ -367,10 +344,7 @@ namespace UP_Student_Management.Classes.Context
                     destinationPath = Path.Combine(studentFolder, fileName);
                 }
 
-                // Копируем файл
                 File.Copy(sourceFilePath, destinationPath, false);
-
-                // Сохраняем информацию в базу данных
                 AddStudentFile(destinationPath);
 
                 return destinationPath;
@@ -381,7 +355,6 @@ namespace UP_Student_Management.Classes.Context
             }
         }
 
-        // Получить информацию о файлах студента
         public List<StudentFileInfo> GetStudentFileInfos()
         {
             var files = GetStudentFiles();
@@ -401,7 +374,6 @@ namespace UP_Student_Management.Classes.Context
             return fileInfos;
         }
 
-        // Удалить физические файлы студента
         private void DeleteStudentPhysicalFiles()
         {
             string studentFolder = GetStudentFolderPath();
@@ -418,7 +390,6 @@ namespace UP_Student_Management.Classes.Context
             }
         }
 
-        // Получить путь к папке файлов студента
         public string GetStudentFolderPath()
         {
             return Path.Combine(
@@ -433,14 +404,12 @@ namespace UP_Student_Management.Classes.Context
 
         #region Статические методы для работы с файлами
 
-        // Статический метод для получения файлов студента
         public static List<StudentFileService> GetFilesForStudent(int studentId)
         {
             var fileService = new StudentFileService();
             return fileService.GetFilesByStudentId(studentId);
         }
 
-        // Статический метод для добавления файла студенту
         public static void AddFileToStudent(int studentId, string filePath)
         {
             var studentFile = new StudentFileService
@@ -451,18 +420,284 @@ namespace UP_Student_Management.Classes.Context
             studentFile.AddFile();
         }
 
-        // Статический метод для удаления всех файлов студента
         public static void DeleteAllFilesForStudent(int studentId)
         {
             var fileService = new StudentFileService();
             fileService.DeleteAllFilesByStudentId(studentId);
         }
 
-        // Статический метод для удаления конкретного файла
         public static void DeleteFile(int fileId)
         {
             var studentFile = new StudentFileService { Id = fileId };
             studentFile.DeleteFile();
+        }
+
+        #endregion
+
+        #region Методы поиска и фильтрации
+
+        public List<StudentContext> SearchStudents(string searchTerm)
+        {
+            List<StudentContext> results = new List<StudentContext>();
+
+            string query = @"
+                SELECT 
+                    Id, Firstname, Surname, BirthDate, Patronomyc, 
+                    Sex, Phone, Education, GroupName, isBudget,
+                    YearReceipts, YearFinish, DeductionsInfo, 
+                    DataDeductions, Note, ParentsInfo, Penalties,
+                    DepartmentId
+                FROM `Students`
+                WHERE 
+                    Firstname LIKE @searchTerm OR
+                    Surname LIKE @searchTerm OR
+                    Patronomyc LIKE @searchTerm OR
+                    GroupName LIKE @searchTerm OR
+                    Phone LIKE @searchTerm
+                ORDER BY Surname, Firstname";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@searchTerm", $"%{searchTerm}%");
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                StudentContext student = MapDataReaderToStudent(data);
+                                results.Add(student);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка поиска студентов: {ex.Message}");
+                }
+            }
+
+            return results;
+        }
+
+        public StudentContext GetById(int id)
+        {
+            string query = @"
+                SELECT 
+                    Id, Firstname, Surname, BirthDate, Patronomyc, 
+                    Sex, Phone, Education, GroupName, isBudget,
+                    YearReceipts, YearFinish, DeductionsInfo, 
+                    DataDeductions, Note, ParentsInfo, Penalties,
+                    DepartmentId
+                FROM `Students`
+                WHERE Id = @id";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            if (data.Read())
+                            {
+                                return MapDataReaderToStudent(data);
+                            }
+                        }
+                    }
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения студента по ID: {ex.Message}");
+                }
+            }
+        }
+
+        public List<StudentContext> GetStudentsByDepartment(int departmentId)
+        {
+            List<StudentContext> students = new List<StudentContext>();
+
+            string query = @"
+                SELECT 
+                    Id, Firstname, Surname, BirthDate, Patronomyc, 
+                    Sex, Phone, Education, GroupName, isBudget,
+                    YearReceipts, YearFinish, DeductionsInfo, 
+                    DataDeductions, Note, ParentsInfo, Penalties,
+                    DepartmentId
+                FROM `Students`
+                WHERE DepartmentId = @departmentId
+                ORDER BY Surname, Firstname";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@departmentId", departmentId);
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                StudentContext student = MapDataReaderToStudent(data);
+                                students.Add(student);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения студентов по отделению: {ex.Message}");
+                }
+            }
+
+            return students;
+        }
+
+        public List<StudentContext> GetStudentsByYear(int year)
+        {
+            List<StudentContext> students = new List<StudentContext>();
+
+            string query = @"
+                SELECT 
+                    Id, Firstname, Surname, BirthDate, Patronomyc, 
+                    Sex, Phone, Education, GroupName, isBudget,
+                    YearReceipts, YearFinish, DeductionsInfo, 
+                    DataDeductions, Note, ParentsInfo, Penalties,
+                    DepartmentId
+                FROM `Students`
+                WHERE YearReceipts = @year
+                ORDER BY Surname, Firstname";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@year", year);
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                StudentContext student = MapDataReaderToStudent(data);
+                                students.Add(student);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения студентов по году: {ex.Message}");
+                }
+            }
+
+            return students;
+        }
+
+        public List<StudentContext> GetStudentsByGroup(string groupName)
+        {
+            List<StudentContext> students = new List<StudentContext>();
+
+            string query = @"
+                SELECT 
+                    Id, Firstname, Surname, BirthDate, Patronomyc, 
+                    Sex, Phone, Education, GroupName, isBudget,
+                    YearReceipts, YearFinish, DeductionsInfo, 
+                    DataDeductions, Note, ParentsInfo, Penalties,
+                    DepartmentId
+                FROM `Students`
+                WHERE GroupName LIKE @groupName
+                ORDER BY Surname, Firstname";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@groupName", $"%{groupName}%");
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                StudentContext student = MapDataReaderToStudent(data);
+                                students.Add(student);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения студентов по группе: {ex.Message}");
+                }
+            }
+
+            return students;
+        }
+
+        public List<StudentContext> GetStudentsByFinanceType(bool isBudget)
+        {
+            List<StudentContext> students = new List<StudentContext>();
+
+            string query = @"
+                SELECT 
+                    Id, Firstname, Surname, BirthDate, Patronomyc, 
+                    Sex, Phone, Education, GroupName, isBudget,
+                    YearReceipts, YearFinish, DeductionsInfo, 
+                    DataDeductions, Note, ParentsInfo, Penalties,
+                    DepartmentId
+                FROM `Students`
+                WHERE isBudget = @isBudget
+                ORDER BY Surname, Firstname";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@isBudget", isBudget ? 1 : 0);
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                StudentContext student = MapDataReaderToStudent(data);
+                                students.Add(student);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения студентов по типу финансирования: {ex.Message}");
+                }
+            }
+
+            return students;
         }
 
         #endregion
@@ -564,272 +799,8 @@ namespace UP_Student_Management.Classes.Context
 
         #endregion
 
-        #region Методы поиска и фильтрации
-
-        public List<StudentContext> SearchStudents(string searchTerm)
-        {
-            List<StudentContext> results = new List<StudentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
-
-            string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE 
-                    Firstname LIKE @searchTerm OR
-                    Surname LIKE @searchTerm OR
-                    Patronomyc LIKE @searchTerm OR
-                    GroupName LIKE @searchTerm OR
-                    Phone LIKE @searchTerm
-                ORDER BY Surname, Firstname";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@searchTerm", $"%{searchTerm}%");
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
-                {
-                    StudentContext student = MapDataReaderToStudent(data);
-                    results.Add(student);
-                }
-
-                data.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка поиска студентов: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return results;
-        }
-
-        public StudentContext GetById(int id)
-        {
-            MySqlConnection connection = Connection.OpenConnection();
-
-            string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE Id = @id";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id", id);
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                if (data.Read())
-                {
-                    return MapDataReaderToStudent(data);
-                }
-
-                data.Close();
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения студента по ID: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
-
-        public List<StudentContext> GetStudentsByDepartment(int departmentId)
-        {
-            List<StudentContext> students = new List<StudentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
-
-            string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE DepartmentId = @departmentId
-                ORDER BY Surname, Firstname";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@departmentId", departmentId);
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
-                {
-                    StudentContext student = MapDataReaderToStudent(data);
-                    students.Add(student);
-                }
-
-                data.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения студентов по отделению: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return students;
-        }
-
-        public List<StudentContext> GetStudentsByYear(int year)
-        {
-            List<StudentContext> students = new List<StudentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
-
-            string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE YearReceipts = @year
-                ORDER BY Surname, Firstname";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@year", year);
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
-                {
-                    StudentContext student = MapDataReaderToStudent(data);
-                    students.Add(student);
-                }
-
-                data.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения студентов по году: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return students;
-        }
-
-        public List<StudentContext> GetStudentsByGroup(string groupName)
-        {
-            List<StudentContext> students = new List<StudentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
-
-            string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE GroupName LIKE @groupName
-                ORDER BY Surname, Firstname";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@groupName", $"%{groupName}%");
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
-                {
-                    StudentContext student = MapDataReaderToStudent(data);
-                    students.Add(student);
-                }
-
-                data.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения студентов по группе: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return students;
-        }
-
-        public List<StudentContext> GetStudentsByFinanceType(bool isBudget)
-        {
-            List<StudentContext> students = new List<StudentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
-
-            string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE isBudget = @isBudget
-                ORDER BY Surname, Firstname";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@isBudget", isBudget ? 1 : 0);
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
-                {
-                    StudentContext student = MapDataReaderToStudent(data);
-                    students.Add(student);
-                }
-
-                data.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения студентов по типу финансирования: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return students;
-        }
-
-        #endregion
-
         #region Вспомогательные классы
 
-        // Класс для информации о файле
         public class StudentFileInfo
         {
             public int Id { get; set; }
@@ -860,7 +831,6 @@ namespace UP_Student_Management.Classes.Context
             }
         }
 
-        // Класс для статистики студентов
         public class StudentStatistics
         {
             public int TotalStudents { get; set; }
@@ -879,71 +849,74 @@ namespace UP_Student_Management.Classes.Context
         public StudentStatistics GetStatistics()
         {
             var statistics = new StudentStatistics();
-            MySqlConnection connection = Connection.OpenConnection();
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                // Общее количество студентов
-                string queryTotal = "SELECT COUNT(*) FROM Students";
-                MySqlCommand cmdTotal = new MySqlCommand(queryTotal, connection);
-                statistics.TotalStudents = Convert.ToInt32(cmdTotal.ExecuteScalar());
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                // Студенты на бюджете
-                string queryBudget = "SELECT COUNT(*) FROM Students WHERE isBudget = 1";
-                MySqlCommand cmdBudget = new MySqlCommand(queryBudget, connection);
-                statistics.BudgetStudents = Convert.ToInt32(cmdBudget.ExecuteScalar());
-
-                // Студенты на контракте
-                statistics.ContractStudents = statistics.TotalStudents - statistics.BudgetStudents;
-
-                // Мужчины и женщины
-                string queryMale = "SELECT COUNT(*) FROM Students WHERE Sex = 'М'";
-                MySqlCommand cmdMale = new MySqlCommand(queryMale, connection);
-                statistics.MaleStudents = Convert.ToInt32(cmdMale.ExecuteScalar());
-                statistics.FemaleStudents = statistics.TotalStudents - statistics.MaleStudents;
-
-                // Студенты по годам
-                string queryYears = @"
-                    SELECT YearReceipts, COUNT(*) as Count
-                    FROM Students
-                    GROUP BY YearReceipts
-                    ORDER BY YearReceipts DESC";
-
-                MySqlCommand cmdYears = new MySqlCommand(queryYears, connection);
-                MySqlDataReader yearsData = cmdYears.ExecuteReader();
-                while (yearsData.Read())
+                try
                 {
-                    int year = yearsData.GetInt32("YearReceipts");
-                    int count = yearsData.GetInt32("Count");
-                    statistics.StudentsByYear[year] = count;
+                    using (MySqlCommand cmdTotal = new MySqlCommand("SELECT COUNT(*) FROM Students", connection))
+                    {
+                        statistics.TotalStudents = Convert.ToInt32(cmdTotal.ExecuteScalar());
+                    }
+
+                    using (MySqlCommand cmdBudget = new MySqlCommand("SELECT COUNT(*) FROM Students WHERE isBudget = 1", connection))
+                    {
+                        statistics.BudgetStudents = Convert.ToInt32(cmdBudget.ExecuteScalar());
+                    }
+
+                    statistics.ContractStudents = statistics.TotalStudents - statistics.BudgetStudents;
+
+                    using (MySqlCommand cmdMale = new MySqlCommand("SELECT COUNT(*) FROM Students WHERE Sex = 'М'", connection))
+                    {
+                        statistics.MaleStudents = Convert.ToInt32(cmdMale.ExecuteScalar());
+                    }
+                    statistics.FemaleStudents = statistics.TotalStudents - statistics.MaleStudents;
+
+                    string queryYears = @"
+                        SELECT YearReceipts, COUNT(*) as Count
+                        FROM Students
+                        GROUP BY YearReceipts
+                        ORDER BY YearReceipts DESC";
+
+                    using (MySqlCommand cmdYears = new MySqlCommand(queryYears, connection))
+                    {
+                        using (MySqlDataReader yearsData = cmdYears.ExecuteReader())
+                        {
+                            while (yearsData.Read())
+                            {
+                                int year = yearsData.GetInt32("YearReceipts");
+                                int count = yearsData.GetInt32("Count");
+                                statistics.StudentsByYear[year] = count;
+                            }
+                        }
+                    }
+
+                    string queryDept = @"
+                        SELECT s.DepartmentId, d.Name, COUNT(*) as Count
+                        FROM Students s
+                        LEFT JOIN Departments d ON s.DepartmentId = d.Id
+                        GROUP BY s.DepartmentId, d.Name
+                        ORDER BY Count DESC";
+
+                    using (MySqlCommand cmdDept = new MySqlCommand(queryDept, connection))
+                    {
+                        using (MySqlDataReader deptData = cmdDept.ExecuteReader())
+                        {
+                            while (deptData.Read())
+                            {
+                                int deptId = deptData.GetInt32("DepartmentId");
+                                int count = deptData.GetInt32("Count");
+                                statistics.StudentsByDepartment[deptId] = count;
+                            }
+                        }
+                    }
                 }
-                yearsData.Close();
-
-                // Студенты по отделениям
-                string queryDept = @"
-                    SELECT s.DepartmentId, d.Name, COUNT(*) as Count
-                    FROM Students s
-                    LEFT JOIN Departments d ON s.DepartmentId = d.Id
-                    GROUP BY s.DepartmentId, d.Name
-                    ORDER BY Count DESC";
-
-                MySqlCommand cmdDept = new MySqlCommand(queryDept, connection);
-                MySqlDataReader deptData = cmdDept.ExecuteReader();
-                while (deptData.Read())
+                catch (Exception ex)
                 {
-                    int deptId = deptData.GetInt32("DepartmentId");
-                    int count = deptData.GetInt32("Count");
-                    statistics.StudentsByDepartment[deptId] = count;
+                    throw new Exception($"Ошибка получения статистики: {ex.Message}");
                 }
-                deptData.Close();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения статистики: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
             }
 
             return statistics;

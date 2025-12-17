@@ -12,58 +12,62 @@ namespace UP_Student_Management.Classes.Context
         public List<DepartmentContext> AllDepartments()
         {
             List<DepartmentContext> allDepartments = new List<DepartmentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
 
             string query = "SELECT * FROM `Departments` ORDER BY Name";
-            MySqlDataReader data = Connection.Query(query, connection);
 
-            while (data.Read())
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                DepartmentContext department = new DepartmentContext
-                {
-                    Id = data.GetInt32(0),
-                    Name = data.GetString(1)
-                };
-                allDepartments.Add(department);
-            }
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-            data.Close();
-            connection.Close();
+                using (MySqlDataReader data = Connection.Query(query, connection))
+                {
+                    while (data.Read())
+                    {
+                        DepartmentContext department = new DepartmentContext
+                        {
+                            Id = data.GetInt32(0),
+                            Name = data.GetString(1)
+                        };
+                        allDepartments.Add(department);
+                    }
+                }
+            }
             return allDepartments;
         }
 
         // Метод для получения отделения по ID
         public DepartmentContext GetById(int id)
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            string query = "SELECT * FROM `Departments` WHERE Id = @id";
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                string query = "SELECT * FROM `Departments` WHERE Id = @id";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id", id);
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                MySqlDataReader data = command.ExecuteReader();
-
-                if (data.Read())
+                try
                 {
-                    return new DepartmentContext
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        Id = data.GetInt32(0),
-                        Name = data.GetString(1)
-                    };
-                }
+                        command.Parameters.AddWithValue("@id", id);
 
-                data.Close();
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения отделения по ID: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            if (data.Read())
+                            {
+                                return new DepartmentContext
+                                {
+                                    Id = data.GetInt32(0),
+                                    Name = data.GetString(1)
+                                };
+                            }
+                        }
+                    }
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения отделения по ID: {ex.Message}");
+                }
             }
         }
 
@@ -71,176 +75,181 @@ namespace UP_Student_Management.Classes.Context
         public List<DepartmentContext> SearchByName(string name)
         {
             List<DepartmentContext> departments = new List<DepartmentContext>();
-            MySqlConnection connection = Connection.OpenConnection();
 
-            try
+            string query = "SELECT * FROM `Departments` WHERE Name LIKE @name ORDER BY Name";
+
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                string query = "SELECT * FROM `Departments` WHERE Name LIKE @name ORDER BY Name";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@name", $"%{name}%");
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                MySqlDataReader data = command.ExecuteReader();
-
-                while (data.Read())
+                try
                 {
-                    departments.Add(new DepartmentContext
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        Id = data.GetInt32(0),
-                        Name = data.GetString(1)
-                    });
-                }
+                        command.Parameters.AddWithValue("@name", $"%{name}%");
 
-                data.Close();
-                return departments;
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            while (data.Read())
+                            {
+                                departments.Add(new DepartmentContext
+                                {
+                                    Id = data.GetInt32(0),
+                                    Name = data.GetString(1)
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка поиска отделения: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка поиска отделения: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
-            }
+
+            return departments;
         }
 
         public void Save(bool Update = false)
         {
-            MySqlConnection connection = Connection.OpenConnection();
-
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                if (Update)
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
+
+                try
                 {
-                    string query = "UPDATE `Departments` SET Name = @name WHERE Id = @id";
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@name", this.Name);
-                    command.Parameters.AddWithValue("@id", this.Id);
-
-                    command.ExecuteNonQuery();
+                    if (Update)
+                    {
+                        string query = "UPDATE `Departments` SET Name = @name WHERE Id = @id";
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@name", this.Name);
+                            command.Parameters.AddWithValue("@id", this.Id);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        string query = "INSERT INTO `Departments` (Name) VALUES (@name)";
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@name", this.Name);
+                            command.ExecuteNonQuery();
+                            this.Id = (int)command.LastInsertedId;
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    string query = "INSERT INTO `Departments` (Name) VALUES (@name)";
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@name", this.Name);
-
-                    command.ExecuteNonQuery();
-
-                    // Получаем ID вставленной записи
-                    this.Id = (int)command.LastInsertedId;
+                    throw new Exception($"Ошибка сохранения отделения: {ex.Message}");
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка сохранения отделения: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
         public void Delete()
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            using (MySqlConnection connection = Connection.OpenConnection())
+            {
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-            try
-            {
-                string query = "DELETE FROM `Departments` WHERE Id = @id";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id", this.Id);
-
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка удаления отделения: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                try
+                {
+                    string query = "DELETE FROM `Departments` WHERE Id = @id";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", this.Id);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка удаления отделения: {ex.Message}");
+                }
             }
         }
 
         // Метод для проверки существования отделения
         public bool Exists(int id)
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            string query = "SELECT COUNT(*) FROM `Departments` WHERE Id = @id";
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                string query = "SELECT COUNT(*) FROM `Departments` WHERE Id = @id";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@id", id);
+                if (connection == null) return false;
 
-                int count = Convert.ToInt32(command.ExecuteScalar());
-                return count > 0;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                connection.Close();
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        return count > 0;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
         // Метод для проверки существования отделения по имени
         public bool ExistsByName(string name, int? excludeId = null)
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            string query = "SELECT COUNT(*) FROM `Departments` WHERE Name = @name";
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                string query = "SELECT COUNT(*) FROM `Departments` WHERE Name = @name";
+                if (connection == null) return false;
 
-                if (excludeId.HasValue)
+                try
                 {
-                    query += " AND Id != @excludeId";
+                    if (excludeId.HasValue)
+                    {
+                        query += " AND Id != @excludeId";
+                    }
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@name", name);
+
+                        if (excludeId.HasValue)
+                        {
+                            command.Parameters.AddWithValue("@excludeId", excludeId.Value);
+                        }
+
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        return count > 0;
+                    }
                 }
-
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@name", name);
-
-                if (excludeId.HasValue)
+                catch
                 {
-                    command.Parameters.AddWithValue("@excludeId", excludeId.Value);
+                    return false;
                 }
-
-                int count = Convert.ToInt32(command.ExecuteScalar());
-                return count > 0;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
         // Метод для получения количества студентов в отделении
         public int GetStudentCount()
         {
-            MySqlConnection connection = Connection.OpenConnection();
+            string query = "SELECT COUNT(*) FROM Students WHERE DepartmentId = @departmentId";
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                string query = "SELECT COUNT(*) FROM Students WHERE DepartmentId = @departmentId";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@departmentId", this.Id);
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                return Convert.ToInt32(command.ExecuteScalar());
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения количества студентов: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
+                try
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@departmentId", this.Id);
+                        return Convert.ToInt32(command.ExecuteScalar());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка получения количества студентов: {ex.Message}");
+                }
             }
         }
 
@@ -248,65 +257,67 @@ namespace UP_Student_Management.Classes.Context
         public DepartmentStatistics GetStatistics()
         {
             var statistics = new DepartmentStatistics();
-            MySqlConnection connection = Connection.OpenConnection();
 
-            try
+            using (MySqlConnection connection = Connection.OpenConnection())
             {
-                // Общее количество студентов
-                string queryCount = @"
-                    SELECT COUNT(*) as TotalStudents,
-                           SUM(CASE WHEN isBudget = 1 THEN 1 ELSE 0 END) as BudgetStudents,
-                           SUM(CASE WHEN Sex = 'М' THEN 1 ELSE 0 END) as MaleStudents
-                    FROM Students
-                    WHERE DepartmentId = @departmentId";
+                if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                MySqlCommand command = new MySqlCommand(queryCount, connection);
-                command.Parameters.AddWithValue("@departmentId", this.Id);
-
-                MySqlDataReader data = command.ExecuteReader();
-
-                if (data.Read())
+                try
                 {
-                    statistics.TotalStudents = data.GetInt32("TotalStudents");
-                    statistics.BudgetStudents = data.GetInt32("BudgetStudents");
-                    statistics.ContractStudents = statistics.TotalStudents - statistics.BudgetStudents;
-                    statistics.MaleStudents = data.GetInt32("MaleStudents");
-                    statistics.FemaleStudents = statistics.TotalStudents - statistics.MaleStudents;
+                    // Общее количество студентов
+                    string queryCount = @"
+                        SELECT COUNT(*) as TotalStudents,
+                               SUM(CASE WHEN isBudget = 1 THEN 1 ELSE 0 END) as BudgetStudents,
+                               SUM(CASE WHEN Sex = 'М' THEN 1 ELSE 0 END) as MaleStudents
+                        FROM Students
+                        WHERE DepartmentId = @departmentId";
+
+                    using (MySqlCommand command = new MySqlCommand(queryCount, connection))
+                    {
+                        command.Parameters.AddWithValue("@departmentId", this.Id);
+
+                        using (MySqlDataReader data = command.ExecuteReader())
+                        {
+                            if (data.Read())
+                            {
+                                statistics.TotalStudents = data.GetInt32("TotalStudents");
+                                statistics.BudgetStudents = data.GetInt32("BudgetStudents");
+                                statistics.ContractStudents = statistics.TotalStudents - statistics.BudgetStudents;
+                                statistics.MaleStudents = data.GetInt32("MaleStudents");
+                                statistics.FemaleStudents = statistics.TotalStudents - statistics.MaleStudents;
+                            }
+                        }
+                    }
+
+                    // Студенты по годам
+                    string queryYears = @"
+                        SELECT YearReceipts, COUNT(*) as Count
+                        FROM Students
+                        WHERE DepartmentId = @departmentId
+                        GROUP BY YearReceipts
+                        ORDER BY YearReceipts DESC";
+
+                    using (MySqlCommand cmdYears = new MySqlCommand(queryYears, connection))
+                    {
+                        cmdYears.Parameters.AddWithValue("@departmentId", this.Id);
+
+                        using (MySqlDataReader yearsData = cmdYears.ExecuteReader())
+                        {
+                            while (yearsData.Read())
+                            {
+                                int year = yearsData.GetInt32("YearReceipts");
+                                int count = yearsData.GetInt32("Count");
+                                statistics.StudentsByYear[year] = count;
+                            }
+                        }
+                    }
+
+                    return statistics;
                 }
-
-                data.Close();
-
-                // Студенты по годам
-                string queryYears = @"
-                    SELECT YearReceipts, COUNT(*) as Count
-                    FROM Students
-                    WHERE DepartmentId = @departmentId
-                    GROUP BY YearReceipts
-                    ORDER BY YearReceipts DESC";
-
-                command = new MySqlCommand(queryYears, connection);
-                command.Parameters.AddWithValue("@departmentId", this.Id);
-
-                data = command.ExecuteReader();
-
-                while (data.Read())
+                catch (Exception ex)
                 {
-                    int year = data.GetInt32("YearReceipts");
-                    int count = data.GetInt32("Count");
-                    statistics.StudentsByYear[year] = count;
+                    throw new Exception($"Ошибка получения статистики отделения: {ex.Message}");
                 }
-
-                data.Close();
-
-                return statistics;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка получения статистики отделения: {ex.Message}");
-            }
-            finally
-            {
-                connection.Close();
             }
         }
     }
