@@ -355,6 +355,15 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
+            // ВАЛИДАЦИЯ ГРУППЫ
+            if (string.IsNullOrWhiteSpace(txtGroup.Text))
+            {
+                MessageBox.Show("Пожалуйста, укажите группу студента", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtGroup.Focus();
+                return false;
+            }
+
             // Валидация года поступления
             if (string.IsNullOrWhiteSpace(txtYear.Text))
             {
@@ -388,8 +397,6 @@ namespace UP_Student_Management.Pages.Admin
                 txtYearEnd.Focus();
                 return false;
             }
-
-            // Валидация возраста
             int age = DateTime.Now.Year - dateCapacity.SelectedDate.Value.Year;
             if (DateTime.Now.DayOfYear < dateCapacity.SelectedDate.Value.DayOfYear)
                 age--;
@@ -402,7 +409,6 @@ namespace UP_Student_Management.Pages.Admin
                 return false;
             }
 
-            // Валидация номера телефона
             string phone = txtPhoneNumber.Text.Trim();
             if (!string.IsNullOrEmpty(phone))
             {
@@ -417,6 +423,7 @@ namespace UP_Student_Management.Pages.Admin
 
             return true;
         }
+
 
         // Метод для валидации имени, фамилии, отчества
         private bool IsValidName(string name, string fieldName)
