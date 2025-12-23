@@ -174,30 +174,34 @@ namespace UP_Student_Management.Classes.Context
             List<StudentContext> allStudents = new List<StudentContext>();
 
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                ORDER BY Surname, Firstname";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        ORDER BY Surname, Firstname";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
                 if (connection == null) throw new Exception("Не удалось установить соединение с базой данных");
 
-                using (MySqlDataReader data = Connection.Query(query, connection))
+                using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
-                    while (data.Read())
+                    using (MySqlDataReader data = command.ExecuteReader())
                     {
-                        StudentContext student = MapDataReaderToStudent(data);
-                        allStudents.Add(student);
+                        while (data.Read())
+                        {
+                            StudentContext student = MapDataReaderToStudent(data);
+                            allStudents.Add(student);
+                        }
                     }
                 }
             }
             return allStudents;
         }
+
 
         public void Save(bool Update = false)
         {
@@ -207,55 +211,50 @@ namespace UP_Student_Management.Classes.Context
 
                 try
                 {
-                    if (Update)
-                    {
-                        string query = @"
-                            UPDATE `Students` 
-                            SET 
-                                Firstname = @firstname,
-                                Surname = @surname,
-                                BirthDate = @birthdate,
-                                Patronomyc = @patronomyc,
-                                Sex = @sex,
-                                Phone = @phone,
-                                Education = @education,
-                                GroupName = @groupName,
-                                isBudget = @isBudget,
-                                YearReceipts = @yearReceipts,
-                                YearFinish = @yearFinish,
-                                DeductionsInfo = @deductionsInfo,
-                                DataDeductions = @dataDeductions,
-                                Note = @note,
-                                ParentsInfo = @parentsInfo,
-                                Penalties = @penalties,
-                                DepartmentId = @departmentId
-                            WHERE Id = @id";
+                    string query = Update
+                        ? @"
+                    UPDATE `Students` 
+                    SET 
+                        Firstname = @firstname,
+                        Surname = @surname,
+                        BirthDate = @birthdate,
+                        Patronomyc = @patronomyc,
+                        Sex = @sex,
+                        Phone = @phone,
+                        Education = @education,
+                        GroupName = @groupName,
+                        isBudget = @isBudget,
+                        YearReceipts = @yearReceipts,
+                        YearFinish = @yearFinish,
+                        DeductionsInfo = @deductionsInfo,
+                        DataDeductions = @dataDeductions,
+                        Note = @note,
+                        ParentsInfo = @parentsInfo,
+                        Penalties = @penalties,
+                        DepartmentId = @departmentId
+                    WHERE Id = @id"
+                        : @"
+                    INSERT INTO `Students` 
+                    (Firstname, Surname, BirthDate, Patronomyc, Sex, Phone, 
+                     Education, GroupName, isBudget, YearReceipts, YearFinish,
+                     DeductionsInfo, DataDeductions, Note, ParentsInfo, Penalties,
+                     DepartmentId) 
+                    VALUES 
+                    (@firstname, @surname, @birthdate, @patronomyc, @sex, @phone,
+                     @education, @groupName, @isBudget, @yearReceipts, @yearFinish,
+                     @deductionsInfo, @dataDeductions, @note, @parentsInfo, @penalties,
+                     @departmentId)";
 
-                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        AddParameters(command);
+                        if (Update)
                         {
-                            AddParameters(command);
                             command.Parameters.AddWithValue("@id", this.Id);
-                            command.ExecuteNonQuery();
                         }
-                    }
-                    else
-                    {
-                        string query = @"
-                            INSERT INTO `Students` 
-                            (Firstname, Surname, BirthDate, Patronomyc, Sex, Phone, 
-                             Education, GroupName, isBudget, YearReceipts, YearFinish,
-                             DeductionsInfo, DataDeductions, Note, ParentsInfo, Penalties,
-                             DepartmentId) 
-                            VALUES 
-                            (@firstname, @surname, @birthdate, @patronomyc, @sex, @phone,
-                             @education, @groupName, @isBudget, @yearReceipts, @yearFinish,
-                             @deductionsInfo, @dataDeductions, @note, @parentsInfo, @penalties,
-                             @departmentId)";
-
-                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        command.ExecuteNonQuery();
+                        if (!Update)
                         {
-                            AddParameters(command);
-                            command.ExecuteNonQuery();
                             this.Id = (int)command.LastInsertedId;
                         }
                     }
@@ -266,6 +265,7 @@ namespace UP_Student_Management.Classes.Context
                 }
             }
         }
+
 
         public void Delete()
         {
@@ -291,6 +291,7 @@ namespace UP_Student_Management.Classes.Context
                 }
             }
         }
+
 
         #endregion
 
@@ -441,20 +442,20 @@ namespace UP_Student_Management.Classes.Context
             List<StudentContext> results = new List<StudentContext>();
 
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE 
-                    Firstname LIKE @searchTerm OR
-                    Surname LIKE @searchTerm OR
-                    Patronomyc LIKE @searchTerm OR
-                    GroupName LIKE @searchTerm OR
-                    Phone LIKE @searchTerm
-                ORDER BY Surname, Firstname";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        WHERE 
+            Firstname LIKE @searchTerm OR
+            Surname LIKE @searchTerm OR
+            Patronomyc LIKE @searchTerm OR
+            GroupName LIKE @searchTerm OR
+            Phone LIKE @searchTerm
+        ORDER BY Surname, Firstname";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
@@ -485,17 +486,18 @@ namespace UP_Student_Management.Classes.Context
             return results;
         }
 
+
         public StudentContext GetById(int id)
         {
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE Id = @id";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        WHERE Id = @id";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
@@ -524,20 +526,21 @@ namespace UP_Student_Management.Classes.Context
             }
         }
 
+
         public List<StudentContext> GetStudentsByDepartment(int departmentId)
         {
             List<StudentContext> students = new List<StudentContext>();
 
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE DepartmentId = @departmentId
-                ORDER BY Surname, Firstname";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        WHERE DepartmentId = @departmentId
+        ORDER BY Surname, Firstname";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
@@ -568,20 +571,21 @@ namespace UP_Student_Management.Classes.Context
             return students;
         }
 
+
         public List<StudentContext> GetStudentsByYear(int year)
         {
             List<StudentContext> students = new List<StudentContext>();
 
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE YearReceipts = @year
-                ORDER BY Surname, Firstname";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        WHERE YearReceipts = @year
+        ORDER BY Surname, Firstname";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
@@ -612,20 +616,21 @@ namespace UP_Student_Management.Classes.Context
             return students;
         }
 
+
         public List<StudentContext> GetStudentsByGroup(string groupName)
         {
             List<StudentContext> students = new List<StudentContext>();
 
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE GroupName LIKE @groupName
-                ORDER BY Surname, Firstname";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        WHERE GroupName LIKE @groupName
+        ORDER BY Surname, Firstname";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
@@ -656,20 +661,21 @@ namespace UP_Student_Management.Classes.Context
             return students;
         }
 
+
         public List<StudentContext> GetStudentsByFinanceType(bool isBudget)
         {
             List<StudentContext> students = new List<StudentContext>();
 
             string query = @"
-                SELECT 
-                    Id, Firstname, Surname, BirthDate, Patronomyc, 
-                    Sex, Phone, Education, GroupName, isBudget,
-                    YearReceipts, YearFinish, DeductionsInfo, 
-                    DataDeductions, Note, ParentsInfo, Penalties,
-                    DepartmentId
-                FROM `Students`
-                WHERE isBudget = @isBudget
-                ORDER BY Surname, Firstname";
+        SELECT 
+            Id, Firstname, Surname, BirthDate, Patronomyc, 
+            Sex, Phone, Education, GroupName, isBudget,
+            YearReceipts, YearFinish, DeductionsInfo, 
+            DataDeductions, Note, ParentsInfo, Penalties,
+            DepartmentId
+        FROM `Students`
+        WHERE isBudget = @isBudget
+        ORDER BY Surname, Firstname";
 
             using (MySqlConnection connection = Connection.OpenConnection())
             {
@@ -699,6 +705,7 @@ namespace UP_Student_Management.Classes.Context
 
             return students;
         }
+
 
         #endregion
 
